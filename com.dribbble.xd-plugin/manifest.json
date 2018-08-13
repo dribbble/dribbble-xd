@@ -1,0 +1,16 @@
+{
+  "id": "com.dribbble.xd-plugin",
+  "name": "Dribbble",
+  "version": "0.0.1",
+  "host": {
+    "app": "XD",
+    "minVersion": "11.0"
+  },
+  "uiEntryPoints": [
+    {
+      "type": "menu",
+      "label": "Create Dribbble Shot",
+      "commandId": "share"
+    }
+  ]
+}
