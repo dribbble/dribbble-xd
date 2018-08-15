@@ -33,10 +33,10 @@ const toSentence = function(array, lastSeparator='or') {
 }
 
 /**
- * Generate a random 7-character string
+ * Generate a random string
  */
 const randomString = function() {
-  return Math.random().toString(36).substring(7)
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 }
 
 /**
@@ -84,6 +84,66 @@ const imageBase64FromNode = async function(node) {
   })
 }
 
+/**
+ * XHR helper to poll an address, with max timeout and retries,
+ * until a succesful response is returned
+ */
+const pollRequest = function({ method, url, params='', timeout=3000, max=10 }={}) {
+  let retryCount = 0
+
+  const request = new XMLHttpRequest()
+  const serializedParams = serializeObject(params)
+
+  const performRequest = function() {
+    retryCount = retryCount + 1
+    request.send(serializedParams)
+  }
+
+  request.timeout = timeout
+  // Y u no work?
+  // request.responseType = 'json'
+
+  request.open(method, url, true)
+  request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+
+  return new Promise((resolve, reject) => {
+    request.addEventListener('load', () => {
+      if (request.status === 200) {
+        try {
+          resolve(request)
+        } catch (error) {
+          reject(`Couldn't parse response. ${error.message}, ${error.response}`)
+        }
+      } else {
+        reject(`Request had an error: ${request.status}`)
+      }
+    })
+
+    request.addEventListener('timeout', () => {
+      if (retryCount === max) {
+        return reject({ state: 'quit' })
+      }
+
+      performRequest()
+    })
+
+    request.addEventListener('error', (error) => {
+      reject({ state: 'error', error: error })
+    })
+
+    performRequest()
+  })
+}
+
+/**
+ * Serialize an object (one level deep) in to URL params
+ */
+const serializeObject = function(obj) {
+  return Object.keys(obj).map((key) => {
+    return `${key}=${encodeURIComponent(obj[key])}`
+  }).join('&')
+}
+
 module.exports = {
   serialize,
   config,
@@ -92,5 +152,7 @@ module.exports = {
   toSentence,
   randomString,
   pickRandom,
-  imageBase64FromNode
+  imageBase64FromNode,
+  pollRequest,
+  serializeObject
 }

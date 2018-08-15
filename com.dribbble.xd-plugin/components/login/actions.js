@@ -1,3 +1,4 @@
+const _ = require('../../library/utils')
 const uxp = require('uxp')
 const Component = require('../../library/component')
 
@@ -6,8 +7,47 @@ module.exports = new Component({
     this.args.dialog.close()
   },
 
-  onRender() {
-    // this.config.displayFooterActions.call(this)
+  login() {
+    const authUrl = `${_.config.siteUrl}/auth/plugin?state=${_.config.platformIdentifier}-${this.sessionId}`
+    uxp.shell.openExternal(authUrl)
+
+    this.refs.footerContainer.innerHTML = this.config.loadingState()
+
+    _.pollRequest({
+      method: 'POST',
+      url: `${_.config.siteUrl}/auth/plugin/check`,
+      params: {
+        code: this.sessionId,
+        provider: _.config.platformIdentifier
+      }
+    }).then((request) => {
+      if (request.status === 200) {
+        var result = JSON.parse(request.responseText)
+        // it worked!!!
+      } else {
+        this.config.displayActions('Something went wrong. Want to try again?')
+      }
+    }).catch((response) => {
+      let message = ''
+
+      if (response.state === 'quit') {
+        message = 'Sorry, we that took too long. Try again?'
+      } else if (response.state === 'error') {
+        console.log(response.error)
+        message = 'Something went wrong. Want to try again?'
+      }
+
+      this.config.displayActions.call(this, message)
+    })
+  },
+
+  displayActions(message) {
+    this.refs.footerContainer.innerHTML = this.config.loginActions(message)
+    this._attachEvents()
+  },
+
+  beforeRender() {
+    this.sessionId = _.randomString()
   },
 
   styles() {
@@ -34,51 +74,60 @@ module.exports = new Component({
 
       #loading-container {
         position: relative;
-        height: 60px;
+        height: 58px;
       }
 
       #loading-inner {
         position: absolute;
         left: 50%;
-        margin-left: -65px;
+        margin-left: -45px;
+        top: 17px;
         display: flex;
         flex-direction: row;
-        font-size: 14px;
-        color: #444;
+        font-size: 15px;
       }
 
-      #loading-container img {
+      #loading-inner img {
         width: 32px;
         height: 32px;
         flex: 0 0 32px;
-        margin-top: -5px;
+      }
+
+      #loading-inner span {
+        margin-top: 4px;
+        color: #444;
       }
     `
   },
 
-  displayFooterActions() {
-    this.refs.footerContainer.innerHTML = `
-      <p id="login-message">To share your work from Adobe XD, please log in.</p>
+  loginActions(message) {
+    return `
+      <p id="login-message">${message}</p>
 
       <footer id="signin-footer">
         <div class="footer-spacer"></div>
         <button click="close">Cancel</button>
-        <button uxp-variant="cta">Log in to Dribbble</button>
+        <button click="login" uxp-variant="cta">Log in to Dribbble</button>
         <div class="footer-spacer"></div>
       </footer>
     `
+  },
 
-    this._attachEvents()
+  loadingState() {
+    return `
+      <div id="loading-container" title="Please visit the page opened in your browser.">
+        <div id="loading-inner">
+          <img src="images/processing.gif" />
+          <span>Waiting...</span>
+        </div>
+      </div>
+    `
   },
 
   content() {
     return `
       <div ref="footerContainer">
-        <div id="loading-container">
-          <div id="loading-inner">
-            <img src="images/processing.gif" />One moment…
-          </div>
-        </div>
+        ${this.config.loginActions('To share your work from Adobe XD, please log in.')}
       </div>
     `
   }
