@@ -1,0 +1,26 @@
+{
+  "name": "com.dribbble.xd-plugin",
+  "version": "0.0.1",
+  "main": "main.js",
+  "scripts": {
+    "watch": "nodemon -w src -e js,jsx,scss -w webpack.config.js -x yarn build",
+    "build": "webpack --mode development"
+  },
+  "license": "none",
+  "private": true,
+  "devDependencies": {
+    "node-sass": "^4.9.3",
+    "nodemon": "^1.18.3",
+    "sass-loader": "^7.1.0",
+    "webpack": "^4.16.4",
+    "webpack-cli": "^3.1.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "style-loader": "^0.22.0",
+    "file-loader": "^1.1.11"
+  }
+}

@@ -1,0 +1,126 @@
+#login-header {
+
+  #container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 233px;
+    padding: 30px 40px 29px 40px;
+    border-top: 3px solid #EA4C89;
+  }
+
+  #shot-image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 308px;
+    height: 230px;
+  }
+
+  #logo img {
+    width: 150px;
+    height: 36.54px;
+    margin-top: 9px;
+  }
+
+  #info {
+    width: 300px;
+    margin-top: 25px;
+  }
+
+  #info.light h1 {
+    color: #fff;
+  }
+
+  #info.light p {
+    color: #fff;
+  }
+
+  #info.dark h1 {
+    color: #444;
+  }
+
+  #info.dark p {
+    color: #555555;
+  }
+
+  #info h1 {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  #info p {
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 2px;
+  }
+
+  #border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #E5E5E5;
+  }
+
+  #spacer {
+    height: 200px;
+    margin-bottom: 30px;
+  }
+}
+
+#login-footer {
+
+  #message {
+    text-align: center;
+    font-size: 16px;
+    line-height: 5px; /* this doesn't seem right */
+    color: #525252;
+  }
+
+  #container {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .spacer {
+    flex: 1 0 0;
+  }
+
+  #container .button-group {
+    display: flex;
+  }
+
+  #container button {
+    margin: 0 5px;
+  }
+
+  #loading-outer {
+    position: relative;
+    height: 58px;
+  }
+
+  #loading-inner {
+    position: absolute;
+    left: 50%;
+    margin-left: -45px;
+    top: 17px;
+    display: flex;
+    flex-direction: row;
+    font-size: 15px;
+  }
+
+  #loading-inner img {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+  }
+
+  #loading-inner span {
+    margin-top: 4px;
+    color: #444;
+  }
+}

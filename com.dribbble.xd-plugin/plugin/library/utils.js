@@ -1,7 +1,7 @@
 require('../vendor/base64')
 const serialize = require('../vendor/serialize')
-const Settings = require('../library/settings')
-const config = require('../config')
+const Settings = require('./settings')
+const config = require('./config')
 const uxp = require('uxp')
 const app = require('application')
 
@@ -145,6 +145,9 @@ const serializeObject = function(obj) {
   }).join('&')
 }
 
+/**
+ * Set up out Settings module
+ */
 const settings = new Settings()
 
 module.exports = {

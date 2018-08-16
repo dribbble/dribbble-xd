@@ -1,5 +1,5 @@
 module.exports = class {
-  constructor(config={}) {
+  constructor() {
     this.eventHandlers = {}
 
     this.el = document.createElement('dialog')
@@ -10,21 +10,6 @@ module.exports = class {
         this.eventHandlers.close.call(this)
       }
     })
-
-    if (config.component != null) {
-      this.setComponent(config.component)
-    }
-  }
-
-  setComponent(component, args) {
-    const combinedArgs = Object.assign(args, {
-      dialog: this,
-    })
-
-    this.el.innerHTML = ''
-    this.el.appendChild(component.render(combinedArgs))
-
-    this.component = component
   }
 
   open() {
