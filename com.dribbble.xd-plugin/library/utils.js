@@ -1,5 +1,6 @@
 require('../vendor/base64')
 const serialize = require('../vendor/serialize')
+const Settings = require('../library/settings')
 const config = require('../config')
 const uxp = require('uxp')
 const app = require('application')
@@ -144,6 +145,8 @@ const serializeObject = function(obj) {
   }).join('&')
 }
 
+const settings = new Settings()
+
 module.exports = {
   serialize,
   config,
@@ -154,5 +157,6 @@ module.exports = {
   pickRandom,
   imageBase64FromNode,
   pollRequest,
-  serializeObject
+  serializeObject,
+  settings
 }

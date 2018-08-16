@@ -46,5 +46,37 @@ module.exports = [
     url: 'https://dribbble.com/shots/3050083-Wednesday',
     backgroundColor: '#F5F4E1',
     theme: 'dark',
+  },
+  {
+    filename: 'proposal-girl.jpg',
+    user: 'Katiuska Pino',
+    title: 'Girl',
+    url: 'https://dribbble.com/shots/4828188-Girl',
+    backgroundColor: '#E35899',
+    theme: 'light',
+  },
+  {
+    filename: 'fridaybeers.gif',
+    user: 'Animade',
+    title: 'Friday Beers',
+    url: 'https://dribbble.com/shots/4794274-Friday-Beers',
+    backgroundColor: '#406DEB',
+    theme: 'light',
+  },
+  {
+    filename: 'pigeon.gif',
+    user: 'EJ Hassenfratz',
+    title: 'Carrier Pigeon',
+    url: 'https://dribbble.com/shots/4833060-Carrier-Pigeon',
+    backgroundColor: '#75D999',
+    theme: 'light',
+  },
+  {
+    filename: 'crayon.jpg',
+    user: 'Joseph Chernashki',
+    title: 'Crayon pattern',
+    url: 'https://dribbble.com/shots/4882170-Crayon-pattern',
+    backgroundColor: '#FFFBEF',
+    theme: 'dark',
   }
 ]

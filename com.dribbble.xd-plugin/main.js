@@ -7,7 +7,9 @@ const shareCommand = async function(selection) {
   let dialogComponent = null
   let argData = {}
 
-  const loggedIn = false
+  const settings = await _.settings.access()
+  const authToken = settings.get('authToken')
+  const loggedIn = authToken != null
 
   if (!document.onLine) {
     dialogComponent = 'errors/not-connected'

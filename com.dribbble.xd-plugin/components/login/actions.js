@@ -23,7 +23,12 @@ module.exports = new Component({
     }).then((request) => {
       if (request.status === 200) {
         var result = JSON.parse(request.responseText)
-        // it worked!!!
+
+        _.settings.access().then((settings) => {
+          settings.set('authToken', result.token)
+        })
+
+        this.config.displayActions.call(this, message)
       } else {
         this.config.displayActions('Something went wrong. Want to try again?')
       }
@@ -36,13 +41,24 @@ module.exports = new Component({
         console.log(response.error)
         message = 'Something went wrong. Want to try again?'
       }
-
-      this.config.displayActions.call(this, message)
     })
   },
 
   displayActions(message) {
     this.refs.footerContainer.innerHTML = this.config.loginActions(message)
+    this._attachEvents()
+  },
+
+  displaySuccess() {
+    this.refs.footerContainer.innerHTML = `
+      <p id="login-message">You’re all set! Re-open this dialog to start sharing.</p>
+
+      <footer id="signin-footer">
+        <div class="footer-spacer"></div>
+        <button click="close" uxp-variant="cta">Okay</button>
+        <div class="footer-spacer"></div>
+      </footer>
+    `
     this._attachEvents()
   },
 
