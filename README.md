@@ -1,10 +1,11 @@
 # Dribbble Plugin for Adobe XD
 
-To load the plugin for development, you'll need
+### What you'll need
 
 - [Currently] API pre-release build #5 or greater of Adobe XD
 - To link `com.dribbble.xd-plugin` to the path XD requires plugins to exist at.
 
+### Setting up
 The plugins path is specific to your platform:
 
 - macOS: `~/Library/Application\ Support/Adobe/Adobe\ XD\ CC\ \(Prerelease\)/`
@@ -21,6 +22,12 @@ For now, copy the folder over to your plugins directory manually, work out of it
 ```bash
 ln -s "$(pwd)"/com.dribbble.xd-plugin "YOUR_XD_PLUGINS_PATH"
 ```
+
+### Developing
+
+- You need Node >=6.11.5 and Yarn
+- Install dependencies with: `yarn install`
+- Watch and automatically rebuild with `yarn watch`
 
 ---
 
