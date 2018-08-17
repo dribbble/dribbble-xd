@@ -29,6 +29,8 @@ ln -s "$(pwd)"/com.dribbble.xd-plugin "YOUR_XD_PLUGINS_PATH"
 - Install dependencies with: `yarn install`
 - Watch and automatically rebuild with `yarn watch`
 
+Building the plugin will generate a `main.js` file. You probably shouldn't manually edit it, but instead make changes inside the `plugin` directory.
+
 ---
 
 <img width="641" alt="screen shot 2018-08-15 at 9 53 35 am" src="https://user-images.githubusercontent.com/6392049/44161154-5bff3280-a071-11e8-8e7f-dd323e4dceb7.png">
