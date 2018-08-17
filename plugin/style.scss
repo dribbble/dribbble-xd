@@ -1,6 +1,6 @@
 #login-header {
 
-  #container {
+  .container {
     position: absolute;
     top: 0;
     left: 0;
@@ -10,7 +10,7 @@
     border-top: 3px solid #EA4C89;
   }
 
-  #shot-image {
+  .shot-image {
     position: absolute;
     top: 0;
     right: 0;
@@ -18,45 +18,44 @@
     height: 230px;
   }
 
-  #logo img {
+  .logo img {
     width: 150px;
     height: 36.54px;
     margin-top: 9px;
   }
 
-  #info {
-    width: 300px;
+  .info {
+    width: 280px;
     margin-top: 25px;
+    position: relative;
+    z-index: 1;
+
+    h1 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    p {
+      margin-top: 10px;
+      font-size: 15px;
+      line-height: 3px;  /* this doesn't seem right */
+    }
+
+    &.light h1,
+    &.light p {
+      color: #fff;
+    }
+
+    &.dark h1 {
+      color: #444;
+    }
+
+    &.dark p {
+      color: #555555;
+    }
   }
 
-  #info.light h1 {
-    color: #fff;
-  }
-
-  #info.light p {
-    color: #fff;
-  }
-
-  #info.dark h1 {
-    color: #444;
-  }
-
-  #info.dark p {
-    color: #555555;
-  }
-
-  #info h1 {
-    font-size: 18px;
-    font-weight: 700;
-  }
-
-  #info p {
-    margin-top: 10px;
-    font-size: 15px;
-    line-height: 2px;
-  }
-
-  #border {
+  .border {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -65,7 +64,7 @@
     background-color: #E5E5E5;
   }
 
-  #spacer {
+  .spacer {
     height: 200px;
     margin-bottom: 30px;
   }
@@ -73,14 +72,14 @@
 
 #login-footer {
 
-  #message {
+  .message {
     text-align: center;
     font-size: 16px;
     line-height: 5px; /* this doesn't seem right */
     color: #525252;
   }
 
-  #container {
+  .container {
     margin-top: 15px;
     display: flex;
     flex-direction: row;
@@ -90,20 +89,20 @@
     flex: 1 0 0;
   }
 
-  #container .button-group {
+  .container .button-group {
     display: flex;
   }
 
-  #container button {
+  .container button {
     margin: 0 5px;
   }
 
-  #loading-outer {
+  .loading-outer {
     position: relative;
     height: 58px;
   }
 
-  #loading-inner {
+  .loading-inner {
     position: absolute;
     left: 50%;
     margin-left: -45px;
@@ -113,14 +112,109 @@
     font-size: 15px;
   }
 
-  #loading-inner img {
+  .loading-inner img {
     width: 32px;
     height: 32px;
     flex: 0 0 32px;
   }
 
-  #loading-inner span {
+  .loading-inner span {
     margin-top: 4px;
     color: #444;
+  }
+}
+
+#errors {
+
+  .message {
+    font-size: 16px;
+    line-height: 5px; /* this doesn't seem right */
+    color: #525252;
+  }
+}
+
+#close-footer {
+  margin-top: 35px;
+  display: flex;
+  flex-direction: row;
+
+  .spacer {
+    flex: 1 0 0;
+  }
+}
+
+#share-header {
+  height: 78px;
+  margin-bottom: 30px;
+
+  header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    width: 100%;
+    padding: 25px 40px 23px 40px;
+    border-top: 3px solid #EA4C89;
+  }
+
+  .top-section {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #E5E5E5;
+  }
+
+  .logo {
+    flex: 0 0 78px;
+
+    img {
+      width: 78px;
+      height: 19px;
+    }
+  }
+
+  .title {
+    display: flex;
+    flex-direction: row;
+    margin-top: 13px;
+
+    img {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      margin-top: 3px;
+    }
+
+    span {
+      margin-left: 9px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #444;
+    }
+  }
+}
+
+#header-dropdown-container {
+  flex: 1 0 0;
+  text-align: right;
+
+  .trigger {
+    display: block;
+    padding: 10px;
+    position: absolute;
+    top: -2px;
+    right: 70px;
+  }
+
+  .dots {
+    width: 22px;
+    height: 5.5px;
   }
 }

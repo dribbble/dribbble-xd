@@ -33,8 +33,8 @@ const shareCommand = async function(s) {
   if (!document.onLine) {
     Component = ErrorModal
     props = { type: 'notConnected' }
-  } else if (!loggedIn) {
-    Component = LoginModal
+  // } else if (!loggedIn) {
+  //   Component = LoginModal
   } else if (!selectedNode) {
     Component = ErrorModal
     props = { type: 'noSelection' }

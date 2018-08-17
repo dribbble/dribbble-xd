@@ -23,22 +23,22 @@ module.exports = class Header extends React.Component {
   render() {
     return (
       <div id="login-header">
-        <header id="container" style={{ backgroundColor: this.state.shot.backgroundColor }}>
-          <div id="shot-image" style={{ backgroundImage: `url('plugin/images/shots/${this.state.shot.filename}')`, backgroundSize: 'cover' }} title={`${this.state.shot.title} by ${this.state.shot.user}`} onClick={(this.launchShot.bind(this))} />
+        <header className="container" style={{ backgroundColor: this.state.shot.backgroundColor }}>
+          <div className="shot-image" style={{ backgroundImage: `url('plugin/images/shots/${this.state.shot.filename}')`, backgroundSize: 'cover' }} title={`${this.state.shot.title} by ${this.state.shot.user}`} onClick={(this.launchShot.bind(this))} />
 
-          <div id="logo" onClick={this.launchSite}>
+          <div className="logo" onClick={this.launchSite}>
             <img src={`plugin/images/dribbble-logo-large-${this.state.shot.theme}.png`} />
           </div>
 
-          <div id="info" className={this.state.shot.theme}>
+          <div className={`info ${this.state.shot.theme}`}>
             <h1>What are you working on?</h1>
             <p>Dribbble is a community of designers sharing screenshots of their work, process, and projects.</p>
           </div>
 
-          <div id="border" />
+          <div className="border" />
         </header>
 
-        <div id="spacer" />
+        <div className="spacer" />
       </div>
     )
   }

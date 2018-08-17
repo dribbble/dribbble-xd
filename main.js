@@ -99,7 +99,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "#login-header #container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  border-top: 3px solid #EA4C89; }\n\n#login-header #shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 308px;\n  height: 230px; }\n\n#login-header #logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px; }\n\n#login-header #info {\n  width: 300px;\n  margin-top: 25px; }\n\n#login-header #info.light h1 {\n  color: #fff; }\n\n#login-header #info.light p {\n  color: #fff; }\n\n#login-header #info.dark h1 {\n  color: #444; }\n\n#login-header #info.dark p {\n  color: #555555; }\n\n#login-header #info h1 {\n  font-size: 18px;\n  font-weight: 700; }\n\n#login-header #info p {\n  margin-top: 10px;\n  font-size: 15px;\n  line-height: 2px; }\n\n#login-header #border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header #spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer #message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#login-footer #container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer #container .button-group {\n  display: flex; }\n\n#login-footer #container button {\n  margin: 0 5px; }\n\n#login-footer #loading-outer {\n  position: relative;\n  height: 58px; }\n\n#login-footer #loading-inner {\n  position: absolute;\n  left: 50%;\n  margin-left: -45px;\n  top: 17px;\n  display: flex;\n  flex-direction: row;\n  font-size: 15px; }\n\n#login-footer #loading-inner img {\n  width: 32px;\n  height: 32px;\n  flex: 0 0 32px; }\n\n#login-footer #loading-inner span {\n  margin-top: 4px;\n  color: #444; }\n", ""]);
+exports.push([module.i, "#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 308px;\n  height: 230px; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px;\n    /* this doesn't seem right */ }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#login-footer .loading-outer {\n  position: relative;\n  height: 58px; }\n\n#login-footer .loading-inner {\n  position: absolute;\n  left: 50%;\n  margin-left: -45px;\n  top: 17px;\n  display: flex;\n  flex-direction: row;\n  font-size: 15px; }\n\n#login-footer .loading-inner img {\n  width: 32px;\n  height: 32px;\n  flex: 0 0 32px; }\n\n#login-footer .loading-inner span {\n  margin-top: 4px;\n  color: #444; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 10px;\n    position: absolute;\n    top: -2px;\n    right: 70px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px; }\n", ""]);
 
 // exports
 
@@ -20632,6 +20632,40 @@ module.exports = g;
 
 /***/ }),
 
+/***/ "./plugin/components/common/CloseFooter.jsx":
+/*!**************************************************!*\
+  !*** ./plugin/components/common/CloseFooter.jsx ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+module.exports = class CloseFooter extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  dismissDialog() {
+    this.props.dialog.close();
+  }
+
+  render() {
+    return React.createElement(
+      "footer",
+      { id: "close-footer" },
+      React.createElement("div", { className: "spacer" }),
+      React.createElement(
+        "button",
+        { "uxp-variant": "cta", onClick: this.dismissDialog.bind(this) },
+        "Okay"
+      )
+    );
+  }
+};
+
+/***/ }),
+
 /***/ "./plugin/components/error/ErrorModal.jsx":
 /*!************************************************!*\
   !*** ./plugin/components/error/ErrorModal.jsx ***!
@@ -20640,33 +20674,144 @@ module.exports = g;
 /***/ (function(module, exports, __webpack_require__) {
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const config = __webpack_require__(/*! ../../library/config */ "./plugin/library/config.js");
+const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
+const Header = __webpack_require__(/*! ../header/Header.jsx */ "./plugin/components/header/Header.jsx");
+const CloseFooter = __webpack_require__(/*! ../common/CloseFooter.jsx */ "./plugin/components/common/CloseFooter.jsx");
+
+const errorMessages = {
+  notConnected() {
+    return 'Whoops! It looks like you’re not connected to the internet.';
+  },
+  noSelection() {
+    return `You’ll need to first select an ${_.toSentence(config.allowedNodeTypes)} from the Layers panel.`;
+  },
+  multipleSelection() {
+    return 'You’ve selected more than one Layer. Please select one and try again.';
+  },
+  badNodeType() {
+    return `Sorry, we can’t currently export a ${this.props.node.constructor.name} layer. Please choose an ${_.toSentence(config.allowedNodeTypes)} from the Layers panel.`;
+  },
+  tooSmall() {
+    return `Your selection is ${this.props.node.width}px × ${this.props.node.height}px, which is too small. Dribbble requires Shots to be at least ${config.dimensionReqs.width}px × ${config.dimensionReqs.height}px.`;
+  }
+};
 
 module.exports = class ErrorModal extends React.Component {
   constructor(props) {
     super(props);
+  }
 
-    this.onDoneClick = e => {
-      this.props.dialog.close();
-    };
+  render() {
+    return React.createElement(
+      'div',
+      { id: 'errors' },
+      React.createElement(Header, { type: this.props.type === 'notConnected' ? 'connection' : 'error' }),
+      React.createElement(
+        'p',
+        { className: 'message' },
+        errorMessages[this.props.type].call(this)
+      ),
+      React.createElement(CloseFooter, { dialog: this.props.dialog })
+    );
+  }
+};
+
+/***/ }),
+
+/***/ "./plugin/components/header/Dropdown.jsx":
+/*!***********************************************!*\
+  !*** ./plugin/components/header/Dropdown.jsx ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+module.exports = class Dropdown extends React.Component {
+  constructor(props) {
+    super(props);
   }
 
   render() {
     return React.createElement(
       "div",
-      null,
+      { id: "header-dropdown-container" },
       React.createElement(
-        "p",
-        null,
-        "Error"
-      ),
+        "div",
+        { className: "trigger" },
+        React.createElement("img", { className: "dots", src: "plugin/images/icon-dots-dark.png" })
+      )
+    );
+  }
+};
+
+/***/ }),
+
+/***/ "./plugin/components/header/Header.jsx":
+/*!*********************************************!*\
+  !*** ./plugin/components/header/Header.jsx ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const Dropdown = __webpack_require__(/*! ./Dropdown.jsx */ "./plugin/components/header/Dropdown.jsx");
+
+const titleTypes = {
+  error: {
+    text: 'Whoops!',
+    icon: 'sad-face.png'
+  },
+  connection: {
+    text: 'No connection',
+    icon: 'no-connection.png'
+  },
+  share: {
+    text: 'Share this selection',
+    icon: 'upload-cloud.png'
+  }
+};
+
+module.exports = class Header extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const title = titleTypes[this.props.type];
+
+    return React.createElement(
+      'div',
+      { id: 'share-header' },
       React.createElement(
-        "footer",
+        'header',
         null,
         React.createElement(
-          "button",
-          { type: "submit", "uxp-variant": "cta", onClick: this.onDoneClick },
-          "Done"
-        )
+          'div',
+          { className: 'top-section' },
+          React.createElement(
+            'div',
+            { className: 'logo-container' },
+            React.createElement(
+              'div',
+              { className: 'logo' },
+              React.createElement('img', { src: 'plugin/images/dribbble-logo.png' })
+            )
+          ),
+          React.createElement(Dropdown, null)
+        ),
+        React.createElement(
+          'p',
+          { className: 'title' },
+          React.createElement('img', { src: `plugin/images/${title.icon}` }),
+          React.createElement(
+            'span',
+            null,
+            title.text
+          )
+        ),
+        React.createElement('div', { className: 'border' })
       )
     );
   }
@@ -20754,10 +20899,10 @@ module.exports = class Actions extends React.Component {
         { id: 'login-footer' },
         React.createElement(
           'div',
-          { id: 'loading-outer', title: 'Please visit the page opened in your browser.' },
+          { className: 'loading-outer', title: 'Please visit the page opened in your browser.' },
           React.createElement(
             'div',
-            { id: 'loading-inner' },
+            { className: 'loading-inner' },
             React.createElement('img', { src: 'plugin/images/processing.gif' }),
             React.createElement(
               'span',
@@ -20774,12 +20919,12 @@ module.exports = class Actions extends React.Component {
       { id: 'login-footer' },
       React.createElement(
         'p',
-        { id: 'message' },
+        { className: 'message' },
         this.messages(this.state.status)
       ),
       React.createElement(
         'footer',
-        { id: 'container' },
+        { className: 'container' },
         React.createElement('div', { className: 'spacer' }),
         this.state.status === 'success' ? React.createElement(
           'button',
@@ -20842,16 +20987,16 @@ module.exports = class Header extends React.Component {
       { id: 'login-header' },
       React.createElement(
         'header',
-        { id: 'container', style: { backgroundColor: this.state.shot.backgroundColor } },
-        React.createElement('div', { id: 'shot-image', style: { backgroundImage: `url('plugin/images/shots/${this.state.shot.filename}')`, backgroundSize: 'cover' }, title: `${this.state.shot.title} by ${this.state.shot.user}`, onClick: this.launchShot.bind(this) }),
+        { className: 'container', style: { backgroundColor: this.state.shot.backgroundColor } },
+        React.createElement('div', { className: 'shot-image', style: { backgroundImage: `url('plugin/images/shots/${this.state.shot.filename}')`, backgroundSize: 'cover' }, title: `${this.state.shot.title} by ${this.state.shot.user}`, onClick: this.launchShot.bind(this) }),
         React.createElement(
           'div',
-          { id: 'logo', onClick: this.launchSite },
+          { className: 'logo', onClick: this.launchSite },
           React.createElement('img', { src: `plugin/images/dribbble-logo-large-${this.state.shot.theme}.png` })
         ),
         React.createElement(
           'div',
-          { id: 'info', className: this.state.shot.theme },
+          { className: `info ${this.state.shot.theme}` },
           React.createElement(
             'h1',
             null,
@@ -20863,9 +21008,9 @@ module.exports = class Header extends React.Component {
             'Dribbble is a community of designers sharing screenshots of their work, process, and projects.'
           )
         ),
-        React.createElement('div', { id: 'border' })
+        React.createElement('div', { className: 'border' })
       ),
-      React.createElement('div', { id: 'spacer' })
+      React.createElement('div', { className: 'spacer' })
     );
   }
 };
@@ -20989,6 +21134,7 @@ module.exports = [{
 /***/ (function(module, exports, __webpack_require__) {
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const Header = __webpack_require__(/*! ../header/Header.jsx */ "./plugin/components/header/Header.jsx");
 
 module.exports = class ShareModal extends React.Component {
   constructor(props) {
@@ -21001,20 +21147,21 @@ module.exports = class ShareModal extends React.Component {
 
   render() {
     return React.createElement(
-      "div",
-      null,
+      'div',
+      { id: 'share-sheet' },
+      React.createElement(Header, { type: 'share' }),
       React.createElement(
-        "p",
+        'p',
         null,
-        "Share"
+        'Share'
       ),
       React.createElement(
-        "footer",
+        'footer',
         null,
         React.createElement(
-          "button",
-          { type: "submit", "uxp-variant": "cta", onClick: this.onDoneClick },
-          "Done"
+          'button',
+          { type: 'submit', 'uxp-variant': 'cta', onClick: this.onDoneClick },
+          'Done'
         )
       )
     );
@@ -21407,9 +21554,10 @@ const shareCommand = async function (s) {
 
   if (!document.onLine) {
     Component = ErrorModal;
-    props = { type: 'notConnected' };
-  } else if (!loggedIn) {
-    Component = LoginModal;
+    props = { type: 'notConnected'
+      // } else if (!loggedIn) {
+      //   Component = LoginModal
+    };
   } else if (!selectedNode) {
     Component = ErrorModal;
     props = { type: 'noSelection' };

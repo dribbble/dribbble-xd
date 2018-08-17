@@ -68,8 +68,8 @@ module.exports = class Actions extends React.Component {
       // This might be better suited in a component for re-use
       return (
         <div id="login-footer">
-          <div id="loading-outer" title="Please visit the page opened in your browser.">
-            <div id="loading-inner">
+          <div className="loading-outer" title="Please visit the page opened in your browser.">
+            <div className="loading-inner">
               <img src="plugin/images/processing.gif" />
               <span>Waiting...</span>
             </div>
@@ -80,9 +80,9 @@ module.exports = class Actions extends React.Component {
 
     return (
       <div id="login-footer">
-        <p id="message">{this.messages(this.state.status)}</p>
+        <p className="message">{this.messages(this.state.status)}</p>
 
-        <footer id="container">
+        <footer className="container">
           <div className="spacer"></div>
           { this.state.status === 'success' ? (
             <button onClick={this.dismissDialog.bind(this)} uxp-variant="cta">Okay</button>
