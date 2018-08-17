@@ -99,7 +99,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, "#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 308px;\n  height: 230px; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px;\n    /* this doesn't seem right */ }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#login-footer .loading-outer {\n  position: relative;\n  height: 58px; }\n\n#login-footer .loading-inner {\n  position: absolute;\n  left: 50%;\n  margin-left: -45px;\n  top: 17px;\n  display: flex;\n  flex-direction: row;\n  font-size: 15px; }\n\n#login-footer .loading-inner img {\n  width: 32px;\n  height: 32px;\n  flex: 0 0 32px; }\n\n#login-footer .loading-inner span {\n  margin-top: 4px;\n  color: #444; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 10px;\n    position: absolute;\n    top: -2px;\n    right: 70px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px; }\n", ""]);
+exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 308px;\n  height: 230px; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px;\n    /* this doesn't seem right */ }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#login-footer .loading-outer {\n  position: relative;\n  height: 58px; }\n\n#login-footer .loading-inner {\n  position: absolute;\n  left: 50%;\n  margin-left: -45px;\n  top: 17px;\n  display: flex;\n  flex-direction: row;\n  font-size: 15px; }\n\n#login-footer .loading-inner img {\n  width: 32px;\n  height: 32px;\n  flex: 0 0 32px; }\n\n#login-footer .loading-inner span {\n  margin-top: 4px;\n  color: #444; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 10px;\n    position: absolute;\n    top: -2px;\n    right: 70px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px; }\n\n#share-sheet form {\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet .left-column {\n  flex: 0 0 240px; }\n\n#share-sheet .right-column {\n  flex: 1 0 0;\n  padding-left: 25px; }\n\n#share-sheet input[type=\"checkbox\"] {\n  margin-right: 10px; }\n\n#share-sheet input[type=\"checkbox\"] + span {\n  position: relative;\n  top: -2px; }\n\n#share-sheet input[type=\"text\"],\n#share-sheet textarea {\n  background-color: #fff;\n  border-radius: 2px; }\n\n#share-sheet textarea {\n  height: 100px; }\n\n#share-sheet .field-label {\n  margin: 0;\n  margin-left: 5px;\n  margin-bottom: 1px;\n  font-size: 12px;\n  color: #707070; }\n\n#share-sheet .field-label + input {\n  margin-bottom: 10px; }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  /**\n     * I don't like this, but you can't modify the height of\n     * the modal after it's opened, so we need to set this in\n     * preparation for the sheet content\n     */\n  height: 303px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet .preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 10px; }\n  #share-sheet .preview img {\n    width: 220px; }\n\n#share-sheet footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n", ""]);
 
 // exports
 
@@ -21134,15 +21134,40 @@ module.exports = [{
 /***/ (function(module, exports, __webpack_require__) {
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
 const Header = __webpack_require__(/*! ../header/Header.jsx */ "./plugin/components/header/Header.jsx");
 
 module.exports = class ShareModal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.onDoneClick = e => {
-      this.props.dialog.close();
+    this.MAX_IMAGE_WIDTH = 220;
+
+    this.state = {
+      loading: true,
+      imageData: null
     };
+  }
+
+  componentDidMount() {
+    _.imageBase64FromNode(this.props.node).then(result => {
+      this.setState({
+        loading: false,
+        imageData: result
+      });
+
+      this.forceUpdate();
+    });
+  }
+
+  dismissDialog() {
+    this.props.dialog.close();
+  }
+
+  submitShot() {
+    let formData = _.serialize(this.refs.shotForm, { hash: true });
+    // TODO: implement this!
+    console.log(formData);
   }
 
   render() {
@@ -21150,18 +21175,84 @@ module.exports = class ShareModal extends React.Component {
       'div',
       { id: 'share-sheet' },
       React.createElement(Header, { type: 'share' }),
-      React.createElement(
-        'p',
-        null,
-        'Share'
-      ),
-      React.createElement(
-        'footer',
+      this.state.loading ? React.createElement(
+        'div',
+        { className: 'loading-container' },
+        React.createElement('img', { className: 'loading-image', src: 'plugin/images/processing.gif' })
+      ) : React.createElement(
+        'div',
         null,
         React.createElement(
-          'button',
-          { type: 'submit', 'uxp-variant': 'cta', onClick: this.onDoneClick },
-          'Done'
+          'form',
+          { method: 'dialog', ref: 'shotForm' },
+          React.createElement(
+            'div',
+            { className: 'left-column' },
+            React.createElement(
+              'div',
+              { className: 'preview' },
+              React.createElement('img', { src: `data:image/png;base64,${this.state.imageData}`, style: { height: this.props.node.height * (this.MAX_IMAGE_WIDTH / this.props.node.width) } })
+            ),
+            React.createElement(
+              'label',
+              { className: 'row' },
+              React.createElement('input', { type: 'checkbox', name: 'low_profile', value: 'true' }),
+              React.createElement(
+                'span',
+                null,
+                'Hide from my profile'
+              )
+            )
+          ),
+          React.createElement(
+            'div',
+            { className: 'right-column' },
+            React.createElement(
+              'label',
+              null,
+              React.createElement(
+                'span',
+                { className: 'field-label' },
+                'Title'
+              ),
+              React.createElement('input', { type: 'text', name: 'title', placeholder: 'Title of your shot', value: this.props.node.name })
+            ),
+            React.createElement(
+              'label',
+              null,
+              React.createElement(
+                'span',
+                { className: 'field-label' },
+                'Tags'
+              ),
+              React.createElement('input', { type: 'text', name: 'tags', placeholder: 'adobe-xd' })
+            ),
+            React.createElement(
+              'label',
+              null,
+              React.createElement(
+                'span',
+                { className: 'field-label' },
+                'Description'
+              ),
+              React.createElement('textarea', { name: 'description', placeholder: 'Tell us about your process and how you arrived at this design' })
+            )
+          )
+        ),
+        React.createElement(
+          'footer',
+          null,
+          React.createElement('div', { className: 'spacer' }),
+          React.createElement(
+            'button',
+            { onClick: this.dismissDialog.bind(this) },
+            'Cancel'
+          ),
+          React.createElement(
+            'button',
+            { onClick: this.submitShot.bind(this), 'uxp-variant': 'cta' },
+            'Share to Dribbble'
+          )
         )
       )
     );
@@ -21554,10 +21645,9 @@ const shareCommand = async function (s) {
 
   if (!document.onLine) {
     Component = ErrorModal;
-    props = { type: 'notConnected'
-      // } else if (!loggedIn) {
-      //   Component = LoginModal
-    };
+    props = { type: 'notConnected' };
+  } else if (!loggedIn) {
+    Component = LoginModal;
   } else if (!selectedNode) {
     Component = ErrorModal;
     props = { type: 'noSelection' };

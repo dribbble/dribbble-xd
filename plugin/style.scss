@@ -1,3 +1,13 @@
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
 #login-header {
 
   .container {
@@ -216,5 +226,101 @@
   .dots {
     width: 22px;
     height: 5.5px;
+  }
+}
+
+#share-sheet {
+
+  form {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .left-column {
+    flex: 0 0 240px;
+  }
+
+  .right-column {
+    flex: 1 0 0;
+    padding-left: 25px;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 10px;
+  }
+
+  input[type="checkbox"] + span {
+    position: relative;
+    top: -2px;
+  }
+
+  input[type="text"],
+  textarea {
+    background-color: #fff;
+    border-radius: 2px;
+  }
+
+  textarea {
+    height: 100px;
+  }
+
+  .field-label {
+    margin: 0;
+    margin-left: 5px;
+    margin-bottom: 1px;
+    font-size: 12px;
+    color: #707070;
+  }
+
+  .field-label + input {
+    margin-bottom: 10px;
+  }
+
+  .loading-container {
+    position: relative;
+    width: 100%;
+
+    /**
+     * I don't like this, but you can't modify the height of
+     * the modal after it's opened, so we need to set this in
+     * preparation for the sheet content
+     */
+    height: 303px;
+  }
+
+  .loading-image {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -16px;
+    margin-left: -16px;
+  }
+
+  .preview {
+    width: 240px;
+    margin-bottom: 15px;
+    border: 1px solid #E1E1E1;
+    border-radius: 4px;
+    padding: 10px;
+
+    img {
+      width: 220px;
+    }
+  }
+
+  footer {
+    margin-top: 35px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  footer button {
+    margin-left: 10px;
+  }
+
+  footer .spacer {
+    flex: 1 0 0;
   }
 }
