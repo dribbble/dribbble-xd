@@ -8,7 +8,7 @@ module.exports = class Actions extends React.Component {
 
     this.state = {
       status: 'login',
-      sessionID: _.randomString()
+      sessionId: _.randomString()
     }
   }
 
