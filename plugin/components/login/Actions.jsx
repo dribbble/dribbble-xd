@@ -32,7 +32,7 @@ module.exports = class Actions extends React.Component {
     this.setState({ status: 'loading' })
 
     _.pollRequest({
-      method: 'POST',
+      method: 'GET',
       url: `${_.config.siteUrl}/auth/plugin/check`,
       params: {
         code: this.state.sessionId,
@@ -58,7 +58,7 @@ module.exports = class Actions extends React.Component {
         this.setState({ status: 'timeout' })
       } else if (response.state === 'error') {
         console.log(`Error logging in: ${response.error}`)
-        this.setState({ status: 'loading' })
+        this.setState({ status: 'error' })
       }
     })
   }

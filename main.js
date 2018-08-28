@@ -20601,37 +20601,6 @@ module.exports = function (css) {
 
 /***/ }),
 
-/***/ "./node_modules/webpack/buildin/global.js":
-/*!***********************************!*\
-  !*** (webpack)/buildin/global.js ***!
-  \***********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1, eval)("this");
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-
 /***/ "./plugin/components/common/CloseFooter.jsx":
 /*!**************************************************!*\
   !*** ./plugin/components/common/CloseFooter.jsx ***!
@@ -20860,7 +20829,7 @@ module.exports = class Actions extends React.Component {
     this.setState({ status: 'loading' });
 
     _.pollRequest({
-      method: 'POST',
+      method: 'GET',
       url: `${_.config.siteUrl}/auth/plugin/check`,
       params: {
         code: this.state.sessionId,
@@ -20886,7 +20855,7 @@ module.exports = class Actions extends React.Component {
         this.setState({ status: 'timeout' });
       } else if (response.state === 'error') {
         console.log(`Error logging in: ${response.error}`);
-        this.setState({ status: 'loading' });
+        this.setState({ status: 'error' });
       }
     });
   }
@@ -21268,12 +21237,11 @@ module.exports = class ShareModal extends React.Component {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-const platformIdentifier = 'adobexd';
+const platformIdentifier = 'xd';
 
-// const siteUrl = "https://dribbble.com/oauth"
-// const apiUrl = "https://api.dribbble.com/v2/"
-const siteUrl = "http://localhost:3000";
-const apiUrl = "http://api.localhost:3000/v2";
+const apiKey = "62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5";
+const siteUrl = `https://${"staging.dribbble.com"}`;
+const apiUrl = `https://api.${"staging.dribbble.com"}/v2`;
 
 // Dribbble requires a shot to
 // be at least 400x300 pixels
@@ -21290,6 +21258,7 @@ const allowedNodeTypes = ['Artboard', 'Rectangle',
 
 module.exports = {
   platformIdentifier,
+  apiKey,
   siteUrl,
   apiUrl,
   dimensionReqs,
@@ -21540,16 +21509,20 @@ const pollRequest = function ({ method, url, params = '', timeout = 3000, max = 
   request.open(method, url, true);
   request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
+  if ("dribbble:bananastand$$" != null) {
+    request.setRequestHeader('Authorization', `Basic ${btoa("dribbble:bananastand$$")}`);
+  }
+
   return new Promise((resolve, reject) => {
     request.addEventListener('load', () => {
       if (request.status === 200) {
         try {
           resolve(request);
         } catch (error) {
-          reject(`Couldn't parse response. ${error.message}, ${error.response}`);
+          reject({ state: 'error', error: `Couldn't parse response. ${error.message}, ${error.response}` });
         }
       } else {
-        reject(`Request had an error: ${request.status}`);
+        reject({ state: 'error', error: `Response code ${request.status}` });
       }
     });
 
@@ -21606,7 +21579,7 @@ module.exports = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global) {var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 /**
  * The XD environment does not provide setTimeout/clearInterval at this time.
@@ -21675,7 +21648,6 @@ module.exports = {
     share: shareCommand
   }
 };
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../node_modules/webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 

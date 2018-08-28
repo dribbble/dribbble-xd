@@ -107,16 +107,20 @@ const pollRequest = function({ method, url, params='', timeout=3000, max=10 }={}
   request.open(method, url, true)
   request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
 
+  if (STAGING_AUTH != null) {
+    request.setRequestHeader('Authorization', `Basic ${btoa(STAGING_AUTH)}`)
+  }
+
   return new Promise((resolve, reject) => {
     request.addEventListener('load', () => {
       if (request.status === 200) {
         try {
           resolve(request)
         } catch (error) {
-          reject(`Couldn't parse response. ${error.message}, ${error.response}`)
+          reject({ state: 'error', error: `Couldn't parse response. ${error.message}, ${error.response}`})
         }
       } else {
-        reject(`Request had an error: ${request.status}`)
+        reject({ state: 'error', error: `Response code ${request.status}`})
       }
     })
 
