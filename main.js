@@ -21289,12 +21289,12 @@ module.exports = class {
   }
 
   open() {
-    this.el.showModal();
-
     const eventHandler = this.eventHandlers.open;
     if (eventHandler) {
       eventHandler.call(this);
     }
+
+    return this.el.showModal();
   }
 
   close() {
@@ -21640,7 +21640,7 @@ const shareCommand = async function (s) {
 
   ReactDOM.render(React.createElement(Component, _extends({ dialog: dialog }, props)), dialog.el);
 
-  dialog.open();
+  return dialog.open();
 };
 
 module.exports = {

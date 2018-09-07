@@ -54,7 +54,7 @@ const shareCommand = async function(s) {
 
   ReactDOM.render(<Component dialog={dialog} {...props} />, dialog.el)
 
-  dialog.open()
+  return dialog.open()
 }
 
 module.exports = {

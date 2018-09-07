@@ -13,12 +13,12 @@ module.exports = class {
   }
 
   open() {
-    this.el.showModal()
-
     const eventHandler = this.eventHandlers.open
     if (eventHandler) {
       eventHandler.call(this)
     }
+
+    return this.el.showModal()
   }
 
   close() {
