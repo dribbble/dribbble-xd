@@ -8,6 +8,29 @@
   flex-direction: column;
 }
 
+input[type=hidden] {
+  display: none;
+}
+
+.loading-button {
+  font-size: 13px;
+  padding: 3px 15px 3px;
+  letter-spacing: .02em;
+  border: none;
+  border-radius: 20px;
+  background: #fff;
+  margin: 0 5px;
+  color: #777;
+  display: flex;
+  align-items: middle;
+
+  img {
+    width: 26px;
+    height: 26px;
+    margin: -3px 0 -10px -7px;
+  }
+}
+
 #login-header {
 
   .container {
@@ -17,6 +40,7 @@
     width: 100%;
     height: 233px;
     padding: 30px 40px 29px 40px;
+    box-sizing: border-box;
     border-top: 3px solid #EA4C89;
   }
 
@@ -24,14 +48,17 @@
     position: absolute;
     top: 0;
     right: 0;
+    z-index: 10;
     width: 308px;
     height: 230px;
+    cursor: pointer;
   }
 
   .logo img {
     width: 150px;
     height: 36.54px;
     margin-top: 9px;
+    cursor: pointer;
   }
 
   .info {
@@ -48,7 +75,7 @@
     p {
       margin-top: 10px;
       font-size: 15px;
-      line-height: 3px;  /* this doesn't seem right */
+      line-height: 3px;
     }
 
     &.light h1,
@@ -85,8 +112,9 @@
   .message {
     text-align: center;
     font-size: 16px;
-    line-height: 5px; /* this doesn't seem right */
+    line-height: 20px;
     color: #525252;
+    margin: 0;
   }
 
   .container {
@@ -105,32 +133,6 @@
 
   .container button {
     margin: 0 5px;
-  }
-
-  .loading-outer {
-    position: relative;
-    height: 58px;
-  }
-
-  .loading-inner {
-    position: absolute;
-    left: 50%;
-    margin-left: -45px;
-    top: 17px;
-    display: flex;
-    flex-direction: row;
-    font-size: 15px;
-  }
-
-  .loading-inner img {
-    width: 32px;
-    height: 32px;
-    flex: 0 0 32px;
-  }
-
-  .loading-inner span {
-    margin-top: 4px;
-    color: #444;
   }
 }
 
@@ -214,78 +216,90 @@
 #header-dropdown-container {
   flex: 1 0 0;
   text-align: right;
+  position: relative;
 
   .trigger {
     display: block;
-    padding: 10px;
+    padding: 15px 10px;
+    height: 34px;
     position: absolute;
-    top: -2px;
-    right: 70px;
+    top: -6px;
+    right: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    cursor: pointer;
+
+    &.active {
+      background: #333;
+    }
+
+    &:not(.active):hover {
+      background: #eee;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
   }
 
   .dots {
     width: 22px;
     height: 5.5px;
+    vertical-align: top;
+    margin-bottom: 20px;
+  }
+}
+
+#dropdown-navigation {
+  background: #333;
+  display: block;
+  position: absolute;
+  top: 25px;
+  right: 0;
+  z-index: -10;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: left;
+  border-radius: 5px;
+  border-top-right-radius: 0;
+
+  ul {
+    list-style-type: none;
+    padding: 10px 0;
+    margin: 0;
+  }
+
+  li.divider {
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  a,
+  p {
+    margin: 0;
+    color: #999;
+    padding: 5px 15px;
+    text-decoration: none;
+    display: block;
+    width: 170px;
+
+    &:hover {
+      color: #ddd;
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    &:active {
+      color: #ddd;
+      background-color: rgba(0,0,0,0.3);
+    }
   }
 }
 
 #share-sheet {
 
-  form {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .left-column {
-    flex: 0 0 240px;
-  }
-
-  .right-column {
-    flex: 1 0 0;
-    padding-left: 25px;
-  }
-
-  input[type="checkbox"] {
-    margin-right: 10px;
-  }
-
-  input[type="checkbox"] + span {
-    position: relative;
-    top: -2px;
-  }
-
-  input[type="text"],
-  textarea {
-    background-color: #fff;
-    border-radius: 2px;
-  }
-
-  textarea {
-    height: 100px;
-  }
-
-  .field-label {
-    margin: 0;
-    margin-left: 5px;
-    margin-bottom: 1px;
-    font-size: 12px;
-    color: #707070;
-  }
-
-  .field-label + input {
-    margin-bottom: 10px;
-  }
-
   .loading-container {
     position: relative;
     width: 100%;
-
-    /**
-     * I don't like this, but you can't modify the height of
-     * the modal after it's opened, so we need to set this in
-     * preparation for the sheet content
-     */
-    height: 303px;
+    height: 320px;
   }
 
   .loading-image {
@@ -298,20 +312,8 @@
     margin-left: -16px;
   }
 
-  .preview {
-    width: 240px;
-    margin-bottom: 15px;
-    border: 1px solid #E1E1E1;
-    border-radius: 4px;
-    padding: 10px;
-
-    img {
-      width: 220px;
-    }
-  }
-
   footer {
-    margin-top: 35px;
+    margin-top: 30px;
     display: flex;
     flex-direction: row;
   }
@@ -322,5 +324,198 @@
 
   footer .spacer {
     flex: 1 0 0;
+  }
+
+  .loading-button {
+    margin-top: 13px;
+    height: 23px;
+  }
+}
+
+#account-selector-container {
+  position: relative;
+  left: -10px;
+  top: -1px;
+
+  .thumb-container {
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .current-account-toggle {
+    display: flex;
+    align-items: center;
+    padding: 9px 10px;
+    margin-top: -6px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #666;
+
+    &.toggleable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eee;
+      }
+    }
+
+    &.active {
+      background-color: #333;
+      color: #999;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+
+      &:hover {
+        background-color: #333;
+      }
+    }
+
+    img {
+      width: 30px;
+      height: 30px;
+      vertical-align: bottom;
+    }
+
+    .name {
+      display: block;
+      color: inherit;
+      margin-left: 7px;
+      font-weight: 500;
+    }
+
+    .label {
+      white-space: nowrap;
+      display: block;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .userName {
+      white-space: nowrap;
+      display: block;
+      font-size: 14px;
+    }
+  }
+
+  .account-selections {
+    position: absolute;
+    bottom: 50px;
+    background-color: #333;
+    color: #999;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    overflow: hidden;
+    min-width: 100%;
+    padding: 6px 0;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+
+    p {
+      white-space: nowrap;
+      color: #999;
+      padding: 5px 15px;
+      text-decoration: none;
+      display: flex;
+      font-size: 14px;
+
+      &:hover {
+        color: #ddd;
+        background-color: rgba(255,255,255,0.1);
+      }
+
+      &:active {
+        color: #ddd;
+        background-color: rgba(0,0,0,0.3);
+      }
+
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      img {
+        width: 18px;
+        height: 18px;
+        vertical-align: middle;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-right: 4px;
+        flex: 0 0 18px;
+      }
+    }
+  }
+}
+
+#shot-form {
+  display: flex;
+  flex-direction: row;
+
+  .left-column {
+    flex: 0 0 240px;
+  }
+
+  .right-column {
+    flex: 1 0 0;
+    padding-left: 25px;
+    margin-top: -5px;
+  }
+}
+
+.checkbox-container {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
+
+  span {
+    font-size: 13px;
+    color: #444;
+    vertical-align: middle;
+    margin-top: 4px;
+    margin-left: 2px;
+  }
+}
+
+.text-field-container {
+  display: block;
+
+  span {
+    display: block;
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+
+  textarea {
+    height: 90px;
+  }
+}
+
+#shot-preview {
+  width: 240px;
+  margin-bottom: 15px;
+  border: 1px solid #E1E1E1;
+  border-radius: 4px;
+  padding: 9px;
+  box-sizing: border-box;
+
+  img {
+    width: 220px;
+    vertical-align: bottom;
+  }
+}
+
+#share-message p {
+  font-size: 17px;
+  line-height: 23px;
+  color: #444;
+
+  a {
+    color: #ea4c89;
   }
 }

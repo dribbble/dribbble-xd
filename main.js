@@ -87,6 +87,316 @@ module.exports =
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/Base64/base64.js":
+/*!***************************************!*\
+  !*** ./node_modules/Base64/base64.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+;(function () {
+
+  var object =
+     true ? exports :
+    undefined; // #31: ExtendScript
+
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+  function InvalidCharacterError(message) {
+    this.message = message;
+  }
+  InvalidCharacterError.prototype = new Error;
+  InvalidCharacterError.prototype.name = 'InvalidCharacterError';
+
+  // encoder
+  // [https://gist.github.com/999166] by [https://github.com/nignag]
+  object.btoa || (
+  object.btoa = function (input) {
+    var str = String(input);
+    for (
+      // initialize result and counter
+      var block, charCode, idx = 0, map = chars, output = '';
+      // if the next str index does not exist:
+      //   change the mapping table to "="
+      //   check if d has no fractional digits
+      str.charAt(idx | 0) || (map = '=', idx % 1);
+      // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+      output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+    ) {
+      charCode = str.charCodeAt(idx += 3/4);
+      if (charCode > 0xFF) {
+        throw new InvalidCharacterError("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+      }
+      block = block << 8 | charCode;
+    }
+    return output;
+  });
+
+  // decoder
+  // [https://gist.github.com/1020396] by [https://github.com/atk]
+  object.atob || (
+  object.atob = function (input) {
+    var str = String(input).replace(/[=]+$/, ''); // #31: ExtendScript bad parse of /=
+    if (str.length % 4 == 1) {
+      throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
+    }
+    for (
+      // initialize result and counters
+      var bc = 0, bs, buffer, idx = 0, output = '';
+      // get next character
+      buffer = str.charAt(idx++);
+      // character found in table? initialize bit storage and add its ascii value;
+      ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+        // and if not first of each 4 characters,
+        // convert the first 8 bits to one ascii character
+        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+    ) {
+      // try to find character in table (0-63, not found => -1)
+      buffer = chars.indexOf(buffer);
+    }
+    return output;
+  });
+
+}());
+
+
+/***/ }),
+
+/***/ "./node_modules/blob-polyfill/Blob.js":
+/*!********************************************!*\
+  !*** ./node_modules/blob-polyfill/Blob.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* Blob.js
+ * A Blob implementation.
+ * 2018-01-12
+ *
+ * By Eli Grey, http://eligrey.com
+ * By Devin Samarin, https://github.com/dsamarin
+ * License: MIT
+ *   See https://github.com/eligrey/Blob.js/blob/master/LICENSE.md
+ */
+
+/*global self, unescape */
+/*jslint bitwise: true, regexp: true, confusion: true, es5: true, vars: true, white: true,
+  plusplus: true */
+
+/*! @source http://purl.eligrey.com/github/Blob.js/blob/master/Blob.js */
+
+(function(global) {
+	(function (factory) {
+		if (true) {
+			// AMD. Register as an anonymous module.
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {}
+	})(function (exports) {
+		"use strict";
+
+		exports.URL = global.URL || global.webkitURL;
+
+		if (global.Blob && global.URL) {
+			try {
+				new Blob;
+				return;
+			} catch (e) {
+				// Blob did not instantiate, time to polyfill
+			}
+		}
+
+		// Internally we use a BlobBuilder implementation to base Blob off of
+		// in order to support older browsers that only have BlobBuilder
+		var BlobBuilder = global.BlobBuilder || global.WebKitBlobBuilder || global.MozBlobBuilder || (function() {
+			var get_class = function(object) {
+					return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
+				}
+				, FakeBlobBuilder = function BlobBuilder() {
+					this.data = [];
+				}
+				, FakeBlob = function Blob(data, type, encoding) {
+					this.data = data;
+					this.size = data.length;
+					this.type = type;
+					this.encoding = encoding;
+				}
+				, FBB_proto = FakeBlobBuilder.prototype
+				, FB_proto = FakeBlob.prototype
+				, FileReaderSync = global.FileReaderSync
+				, FileException = function(type) {
+					this.code = this[this.name = type];
+				}
+				, file_ex_codes = (
+					"NOT_FOUND_ERR SECURITY_ERR ABORT_ERR NOT_READABLE_ERR ENCODING_ERR "
+					+ "NO_MODIFICATION_ALLOWED_ERR INVALID_STATE_ERR SYNTAX_ERR"
+				).split(" ")
+				, file_ex_code = file_ex_codes.length
+				, real_URL = global.URL || global.webkitURL || exports
+				, real_create_object_URL = real_URL.createObjectURL
+				, real_revoke_object_URL = real_URL.revokeObjectURL
+				, URL = real_URL
+				, btoa = global.btoa
+				, atob = global.atob
+
+				, ArrayBuffer = global.ArrayBuffer
+				, Uint8Array = global.Uint8Array
+
+				, origin = /^[\w-]+:\/*\[?[\w.:-]+\]?(?::[0-9]+)?/
+			;
+			FakeBlob.fake = FB_proto.fake = true;
+			while (file_ex_code--) {
+				FileException.prototype[file_ex_codes[file_ex_code]] = file_ex_code + 1;
+			}
+			// Polyfill URL
+			if (!real_URL.createObjectURL) {
+				URL = exports.URL = function(uri) {
+					var uri_info = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+						, uri_origin
+					;
+					uri_info.href = uri;
+					if (!("origin" in uri_info)) {
+						if (uri_info.protocol.toLowerCase() === "data:") {
+							uri_info.origin = null;
+						} else {
+							uri_origin = uri.match(origin);
+							uri_info.origin = uri_origin && uri_origin[1];
+						}
+					}
+					return uri_info;
+				};
+			}
+			URL.createObjectURL = function(blob) {
+				var
+					type = blob.type
+					, data_URI_header
+				;
+				if (type === null) {
+					type = "application/octet-stream";
+				}
+				if (blob instanceof FakeBlob) {
+					data_URI_header = "data:" + type;
+					if (blob.encoding === "base64") {
+						return data_URI_header + ";base64," + blob.data;
+					} else if (blob.encoding === "URI") {
+						return data_URI_header + "," + decodeURIComponent(blob.data);
+					} if (btoa) {
+						return data_URI_header + ";base64," + btoa(blob.data);
+					} else {
+						return data_URI_header + "," + encodeURIComponent(blob.data);
+					}
+				} else if (real_create_object_URL) {
+					return real_create_object_URL.call(real_URL, blob);
+				}
+			};
+			URL.revokeObjectURL = function(object_URL) {
+				if (object_URL.substring(0, 5) !== "data:" && real_revoke_object_URL) {
+					real_revoke_object_URL.call(real_URL, object_URL);
+				}
+			};
+			FBB_proto.append = function(data/*, endings*/) {
+				var bb = this.data;
+				// decode data to a binary string
+				if (Uint8Array && (data instanceof ArrayBuffer || data instanceof Uint8Array)) {
+					var str = ""
+						, buf = new Uint8Array(data)
+						, i = 0
+						, buf_len = buf.length
+					;
+					for (; i < buf_len; i++) {
+						str += String.fromCharCode(buf[i]);
+					}
+					bb.push(str);
+				} else if (get_class(data) === "Blob" || get_class(data) === "File") {
+					if (FileReaderSync) {
+						var fr = new FileReaderSync;
+						bb.push(fr.readAsBinaryString(data));
+					} else {
+						// async FileReader won't work as BlobBuilder is sync
+						throw new FileException("NOT_READABLE_ERR");
+					}
+				} else if (data instanceof FakeBlob) {
+					if (data.encoding === "base64" && atob) {
+						bb.push(atob(data.data));
+					} else if (data.encoding === "URI") {
+						bb.push(decodeURIComponent(data.data));
+					} else if (data.encoding === "raw") {
+						bb.push(data.data);
+					}
+				} else {
+					if (typeof data !== "string") {
+						data += ""; // convert unsupported types to strings
+					}
+					// decode UTF-16 to binary string
+					bb.push(unescape(encodeURIComponent(data)));
+				}
+			};
+			FBB_proto.getBlob = function(type) {
+				if (!arguments.length) {
+					type = null;
+				}
+				return new FakeBlob(this.data.join(""), type, "raw");
+			};
+			FBB_proto.toString = function() {
+				return "[object BlobBuilder]";
+			};
+			FB_proto.slice = function(start, end, type) {
+				var args = arguments.length;
+				if (args < 3) {
+					type = null;
+				}
+				return new FakeBlob(this.data.slice(start, args > 1 ? end : this.data.length)
+					, type
+					, this.encoding
+				);
+			};
+			FB_proto.toString = function() {
+				return "[object Blob]";
+			};
+			FB_proto.close = function() {
+				this.size = 0;
+				delete this.data;
+			};
+			return FakeBlobBuilder;
+		}());
+
+		exports.Blob = function(blobParts, options) {
+			var type = options ? (options.type || "") : "";
+			var builder = new BlobBuilder();
+			if (blobParts) {
+				for (var i = 0, len = blobParts.length; i < len; i++) {
+					if (Uint8Array && blobParts[i] instanceof Uint8Array) {
+						builder.append(blobParts[i].buffer);
+					}
+					else {
+						builder.append(blobParts[i]);
+					}
+				}
+			}
+			var blob = builder.getBlob(type);
+			if (!blob.slice && blob.webkitSlice) {
+				blob.slice = blob.webkitSlice;
+			}
+			return blob;
+		};
+
+		var getPrototypeOf = Object.getPrototypeOf || function(object) {
+			return object.__proto__;
+		};
+		exports.Blob.prototype = getPrototypeOf(new exports.Blob());
+	});
+})(
+	typeof self !== "undefined" && self ||
+	typeof window !== "undefined" && window ||
+	typeof global !== "undefined" && global ||
+	this
+);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./plugin/style.scss":
 /*!**********************************************************************************************!*\
   !*** ./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js!./plugin/style.scss ***!
@@ -99,7 +409,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  width: 308px;\n  height: 230px; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px;\n    /* this doesn't seem right */ }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#login-footer .loading-outer {\n  position: relative;\n  height: 58px; }\n\n#login-footer .loading-inner {\n  position: absolute;\n  left: 50%;\n  margin-left: -45px;\n  top: 17px;\n  display: flex;\n  flex-direction: row;\n  font-size: 15px; }\n\n#login-footer .loading-inner img {\n  width: 32px;\n  height: 32px;\n  flex: 0 0 32px; }\n\n#login-footer .loading-inner span {\n  margin-top: 4px;\n  color: #444; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 10px;\n    position: absolute;\n    top: -2px;\n    right: 70px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px; }\n\n#share-sheet form {\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet .left-column {\n  flex: 0 0 240px; }\n\n#share-sheet .right-column {\n  flex: 1 0 0;\n  padding-left: 25px; }\n\n#share-sheet input[type=\"checkbox\"] {\n  margin-right: 10px; }\n\n#share-sheet input[type=\"checkbox\"] + span {\n  position: relative;\n  top: -2px; }\n\n#share-sheet input[type=\"text\"],\n#share-sheet textarea {\n  background-color: #fff;\n  border-radius: 2px; }\n\n#share-sheet textarea {\n  height: 100px; }\n\n#share-sheet .field-label {\n  margin: 0;\n  margin-left: 5px;\n  margin-bottom: 1px;\n  font-size: 12px;\n  color: #707070; }\n\n#share-sheet .field-label + input {\n  margin-bottom: 10px; }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  /**\n     * I don't like this, but you can't modify the height of\n     * the modal after it's opened, so we need to set this in\n     * preparation for the sheet content\n     */\n  height: 303px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet .preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 10px; }\n  #share-sheet .preview img {\n    width: 220px; }\n\n#share-sheet footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n", ""]);
+exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\ninput[type=hidden] {\n  display: none; }\n\n.loading-button {\n  font-size: 13px;\n  padding: 3px 15px 3px;\n  letter-spacing: .02em;\n  border: none;\n  border-radius: 20px;\n  background: #fff;\n  margin: 0 5px;\n  color: #777;\n  display: flex;\n  align-items: middle; }\n  .loading-button img {\n    width: 26px;\n    height: 26px;\n    margin: -3px 0 -10px -7px; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  box-sizing: border-box;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 10;\n  width: 308px;\n  height: 230px;\n  cursor: pointer; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px;\n  cursor: pointer; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px; }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  color: #525252;\n  margin: 0; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right;\n  position: relative; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 15px 10px;\n    height: 34px;\n    position: absolute;\n    top: -6px;\n    right: 0;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    cursor: pointer; }\n    #header-dropdown-container .trigger.active {\n      background: #333; }\n    #header-dropdown-container .trigger:not(.active):hover {\n      background: #eee;\n      border-bottom-left-radius: 5px;\n      border-bottom-right-radius: 5px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px;\n    vertical-align: top;\n    margin-bottom: 20px; }\n\n#dropdown-navigation {\n  background: #333;\n  display: block;\n  position: absolute;\n  top: 25px;\n  right: 0;\n  z-index: -10;\n  font-size: 14px;\n  line-height: 1.2;\n  text-align: left;\n  border-radius: 5px;\n  border-top-right-radius: 0; }\n  #dropdown-navigation ul {\n    list-style-type: none;\n    padding: 10px 0;\n    margin: 0; }\n  #dropdown-navigation li.divider {\n    border-top: 1px solid rgba(255, 255, 255, 0.15);\n    padding-top: 8px;\n    margin-top: 8px; }\n  #dropdown-navigation a,\n  #dropdown-navigation p {\n    margin: 0;\n    color: #999;\n    padding: 5px 15px;\n    text-decoration: none;\n    display: block;\n    width: 170px; }\n    #dropdown-navigation a:hover,\n    #dropdown-navigation p:hover {\n      color: #ddd;\n      background-color: rgba(255, 255, 255, 0.1); }\n    #dropdown-navigation a:active,\n    #dropdown-navigation p:active {\n      color: #ddd;\n      background-color: rgba(0, 0, 0, 0.3); }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  height: 320px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet footer {\n  margin-top: 30px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n\n#share-sheet .loading-button {\n  margin-top: 13px;\n  height: 23px; }\n\n#account-selector-container {\n  position: relative;\n  left: -10px;\n  top: -1px; }\n  #account-selector-container .thumb-container {\n    border-radius: 50%;\n    overflow: hidden; }\n  #account-selector-container .current-account-toggle {\n    display: flex;\n    align-items: center;\n    padding: 9px 10px;\n    margin-top: -6px;\n    border-radius: 4px;\n    text-decoration: none;\n    color: #666; }\n    #account-selector-container .current-account-toggle.toggleable {\n      cursor: pointer; }\n      #account-selector-container .current-account-toggle.toggleable:hover {\n        background-color: #eee; }\n    #account-selector-container .current-account-toggle.active {\n      background-color: #333;\n      color: #999;\n      border-top-left-radius: 0;\n      border-top-right-radius: 0; }\n      #account-selector-container .current-account-toggle.active:hover {\n        background-color: #333; }\n    #account-selector-container .current-account-toggle img {\n      width: 30px;\n      height: 30px;\n      vertical-align: bottom; }\n    #account-selector-container .current-account-toggle .name {\n      display: block;\n      color: inherit;\n      margin-left: 7px;\n      font-weight: 500; }\n    #account-selector-container .current-account-toggle .label {\n      white-space: nowrap;\n      display: block;\n      font-size: 11px;\n      opacity: 0.7; }\n    #account-selector-container .current-account-toggle .userName {\n      white-space: nowrap;\n      display: block;\n      font-size: 14px; }\n  #account-selector-container .account-selections {\n    position: absolute;\n    bottom: 50px;\n    background-color: #333;\n    color: #999;\n    border-top-left-radius: 4px;\n    border-top-right-radius: 4px;\n    overflow: hidden;\n    min-width: 100%;\n    padding: 6px 0;\n    white-space: nowrap;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.1); }\n    #account-selector-container .account-selections p {\n      white-space: nowrap;\n      color: #999;\n      padding: 5px 15px;\n      text-decoration: none;\n      display: flex;\n      font-size: 14px; }\n      #account-selector-container .account-selections p:hover {\n        color: #ddd;\n        background-color: rgba(255, 255, 255, 0.1); }\n      #account-selector-container .account-selections p:active {\n        color: #ddd;\n        background-color: rgba(0, 0, 0, 0.3); }\n      #account-selector-container .account-selections p span {\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis; }\n      #account-selector-container .account-selections p img {\n        width: 18px;\n        height: 18px;\n        vertical-align: middle;\n        border-radius: 20px;\n        overflow: hidden;\n        margin-right: 4px;\n        flex: 0 0 18px; }\n\n#shot-form {\n  display: flex;\n  flex-direction: row; }\n  #shot-form .left-column {\n    flex: 0 0 240px; }\n  #shot-form .right-column {\n    flex: 1 0 0;\n    padding-left: 25px;\n    margin-top: -5px; }\n\n.checkbox-container {\n  cursor: pointer;\n  display: flex;\n  flex-direction: row; }\n  .checkbox-container input[type=\"checkbox\"] {\n    cursor: pointer; }\n  .checkbox-container span {\n    font-size: 13px;\n    color: #444;\n    vertical-align: middle;\n    margin-top: 4px;\n    margin-left: 2px; }\n\n.text-field-container {\n  display: block; }\n  .text-field-container span {\n    display: block;\n    font-size: 13px;\n    color: #999;\n    margin-bottom: 5px;\n    cursor: pointer; }\n  .text-field-container textarea {\n    height: 90px; }\n\n#shot-preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 9px;\n  box-sizing: border-box; }\n  #shot-preview img {\n    width: 220px;\n    vertical-align: bottom; }\n\n#share-message p {\n  font-size: 17px;\n  line-height: 23px;\n  color: #444; }\n  #share-message p a {\n    color: #ea4c89; }\n", ""]);
 
 // exports
 
@@ -859,6 +1169,34 @@ if (true) {
 }
 
 module.exports = warning;
+
+/***/ }),
+
+/***/ "./node_modules/formdata-polyfill/formdata.min.js":
+/*!********************************************************!*\
+  !*** ./node_modules/formdata-polyfill/formdata.min.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+;(function(){var k,l="function"==typeof Object.defineProperties?Object.defineProperty:function(a,b,d){a!=Array.prototype&&a!=Object.prototype&&(a[b]=d.value)},m="undefined"!=typeof window&&window===this?this:"undefined"!=typeof global&&null!=global?global:this;function n(){n=function(){};m.Symbol||(m.Symbol=p)}var p=function(){var a=0;return function(b){return"jscomp_symbol_"+(b||"")+a++}}();
+function r(){n();var a=m.Symbol.iterator;a||(a=m.Symbol.iterator=m.Symbol("iterator"));"function"!=typeof Array.prototype[a]&&l(Array.prototype,a,{configurable:!0,writable:!0,value:function(){return t(this)}});r=function(){}}function t(a){var b=0;return v(function(){return b<a.length?{done:!1,value:a[b++]}:{done:!0}})}function v(a){r();a={next:a};a[m.Symbol.iterator]=function(){return this};return a}function w(a){r();n();r();var b=a[Symbol.iterator];return b?b.call(a):t(a)}var x;
+if("function"==typeof Object.setPrototypeOf)x=Object.setPrototypeOf;else{var z;a:{var A={o:!0},B={};try{B.__proto__=A;z=B.o;break a}catch(a){}z=!1}x=z?function(a,b){a.__proto__=b;if(a.__proto__!==b)throw new TypeError(a+" is not extensible");return a}:null}var C=x;function D(){this.g=!1;this.c=null;this.m=void 0;this.b=1;this.l=this.s=0;this.f=null}function E(a){if(a.g)throw new TypeError("Generator is already running");a.g=!0}D.prototype.h=function(a){this.m=a};
+D.prototype.i=function(a){this.f={u:a,v:!0};this.b=this.s||this.l};D.prototype["return"]=function(a){this.f={"return":a};this.b=this.l};function F(a,b,d){a.b=d;return{value:b}}function G(a){this.w=a;this.j=[];for(var b in a)this.j.push(b);this.j.reverse()}function H(a){this.a=new D;this.A=a}H.prototype.h=function(a){E(this.a);if(this.a.c)return I(this,this.a.c.next,a,this.a.h);this.a.h(a);return J(this)};
+function K(a,b){E(a.a);var d=a.a.c;if(d)return I(a,"return"in d?d["return"]:function(a){return{value:a,done:!0}},b,a.a["return"]);a.a["return"](b);return J(a)}H.prototype.i=function(a){E(this.a);if(this.a.c)return I(this,this.a.c["throw"],a,this.a.h);this.a.i(a);return J(this)};
+function I(a,b,d,c){try{var e=b.call(a.a.c,d);if(!(e instanceof Object))throw new TypeError("Iterator result "+e+" is not an object");if(!e.done)return a.a.g=!1,e;var f=e.value}catch(g){return a.a.c=null,a.a.i(g),J(a)}a.a.c=null;c.call(a.a,f);return J(a)}function J(a){for(;a.a.b;)try{var b=a.A(a.a);if(b)return a.a.g=!1,{value:b.value,done:!1}}catch(d){a.a.m=void 0,a.a.i(d)}a.a.g=!1;if(a.a.f){b=a.a.f;a.a.f=null;if(b.v)throw b.u;return{value:b["return"],done:!0}}return{value:void 0,done:!0}}
+function L(a){this.next=function(b){return a.h(b)};this["throw"]=function(b){return a.i(b)};this["return"]=function(b){return K(a,b)};r();n();r();this[Symbol.iterator]=function(){return this}}function M(a,b){var d=new L(new H(b));C&&C(d,a.prototype);return d}
+if("undefined"===typeof FormData||!FormData.prototype.keys){var N=function(a,b,d){if(2>arguments.length)throw new TypeError("2 arguments required, but only "+arguments.length+" present.");return b instanceof Blob?[a+"",b,void 0!==d?d+"":"string"===typeof b.name?b.name:"blob"]:[a+"",b+""]},O=function(a){if(!arguments.length)throw new TypeError("1 argument required, but only 0 present.");return[a+""]},P=function(a){var b=w(a);a=b.next().value;b=b.next().value;a instanceof Blob&&(a=new File([a],b,{type:a.type,
+lastModified:a.lastModified}));return a},Q="object"===typeof window?window:"object"===typeof self?self:this,R=Q.FormData,S=Q.XMLHttpRequest&&Q.XMLHttpRequest.prototype.send,T=Q.Request&&Q.fetch;n();var U=Q.Symbol&&Symbol.toStringTag,V=new WeakMap,W=Array.from||function(a){return[].slice.call(a)};U&&(Blob.prototype[U]||(Blob.prototype[U]="Blob"),"File"in Q&&!File.prototype[U]&&(File.prototype[U]="File"));try{new File([],"")}catch(a){Q.File=function(b,d,c){b=new Blob(b,c);c=c&&void 0!==c.lastModified?
+new Date(c.lastModified):new Date;Object.defineProperties(b,{name:{value:d},lastModifiedDate:{value:c},lastModified:{value:+c},toString:{value:function(){return"[object File]"}}});U&&Object.defineProperty(b,U,{value:"File"});return b}}var X=function(a){V.set(this,Object.create(null));if(!a)return this;a=w(W(a.elements));for(var b=a.next();!b.done;b=a.next())if(b=b.value,b.name&&!b.disabled)if("file"===b.type)for(var d=w(W(b.files||[])),c=d.next();!c.done;c=d.next())this.append(b.name,c.value);else if("select-multiple"===
+b.type||"select-one"===b.type)for(d=w(W(b.options)),c=d.next();!c.done;c=d.next())c=c.value,!c.disabled&&c.selected&&this.append(b.name,c.value);else"checkbox"===b.type||"radio"===b.type?b.checked&&this.append(b.name,b.value):this.append(b.name,b.value)};k=X.prototype;k.append=function(a,b,d){var c=V.get(this);c[a]||(c[a]=[]);c[a].push([b,d])};k["delete"]=function(a){delete V.get(this)[a]};k.entries=function b(){var d=this,c,e,f,g,h,q;return M(b,function(b){switch(b.b){case 1:c=V.get(d),f=new G(c);
+case 2:var u;a:{for(u=f;0<u.j.length;){var y=u.j.pop();if(y in u.w){u=y;break a}}u=null}if(null==(e=u)){b.b=0;break}g=w(c[e]);h=g.next();case 5:if(h.done){b.b=2;break}q=h.value;return F(b,[e,P(q)],6);case 6:h=g.next(),b.b=5}})};k.forEach=function(b,d){for(var c=w(this),e=c.next();!e.done;e=c.next()){var f=w(e.value);e=f.next().value;f=f.next().value;b.call(d,f,e,this)}};k.get=function(b){var d=V.get(this);return d[b]?P(d[b][0]):null};k.getAll=function(b){return(V.get(this)[b]||[]).map(P)};k.has=function(b){return b in
+V.get(this)};k.keys=function d(){var c=this,e,f,g,h,q;return M(d,function(d){1==d.b&&(e=w(c),f=e.next());if(3!=d.b){if(f.done){d.b=0;return}g=f.value;h=w(g);q=h.next().value;return F(d,q,3)}f=e.next();d.b=2})};k.set=function(d,c,e){V.get(this)[d]=[[c,e]]};k.values=function c(){var e=this,f,g,h,q,y;return M(c,function(c){1==c.b&&(f=w(e),g=f.next());if(3!=c.b){if(g.done){c.b=0;return}h=g.value;q=w(h);q.next();y=q.next().value;return F(c,y,3)}g=f.next();c.b=2})};X.prototype._asNative=function(){for(var c=
+new R,e=w(this),f=e.next();!f.done;f=e.next()){var g=w(f.value);f=g.next().value;g=g.next().value;c.append(f,g)}return c};X.prototype._blob=function(){for(var c="----formdata-polyfill-"+Math.random(),e=[],f=w(this),g=f.next();!g.done;g=f.next()){var h=w(g.value);g=h.next().value;h=h.next().value;e.push("--"+c+"\r\n");h instanceof Blob?e.push('Content-Disposition: form-data; name="'+g+'"; filename="'+h.name+'"\r\n',"Content-Type: "+(h.type||"application/octet-stream")+"\r\n\r\n",h,"\r\n"):e.push('Content-Disposition: form-data; name="'+
+g+'"\r\n\r\n'+h+"\r\n")}e.push("--"+c+"--");return new Blob(e,{type:"multipart/form-data; boundary="+c})};n();r();X.prototype[Symbol.iterator]=function(){return this.entries()};X.prototype.toString=function(){return"[object FormData]"};U&&(X.prototype[U]="FormData");[["append",N],["delete",O],["get",O],["getAll",O],["has",O],["set",N]].forEach(function(c){var e=X.prototype[c[0]];X.prototype[c[0]]=function(){return e.apply(this,c[1].apply(this,W(arguments)))}});S&&(XMLHttpRequest.prototype.send=function(c){c instanceof
+X?(c=c._blob(),this.setRequestHeader("Content-Type",c.type),S.call(this,c)):S.call(this,c)});if(T){var Y=Q.fetch;Q.fetch=function(c,e){e&&e.body&&e.body instanceof X&&(e.body=e.body._blob());return Y(c,e)}}Q.FormData=X};
+})();
+
 
 /***/ }),
 
@@ -20635,6 +20973,35 @@ module.exports = class CloseFooter extends React.Component {
 
 /***/ }),
 
+/***/ "./plugin/components/common/TokenField.jsx":
+/*!*************************************************!*\
+  !*** ./plugin/components/common/TokenField.jsx ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+module.exports = class TokenField extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    // new _.tokenfield({
+    //   el: this.refs.field
+    // })
+  }
+
+  render() {
+    return React.createElement("input", _extends({ ref: "field", type: "text" }, this.props));
+  }
+};
+
+/***/ }),
+
 /***/ "./plugin/components/error/ErrorModal.jsx":
 /*!************************************************!*\
   !*** ./plugin/components/error/ErrorModal.jsx ***!
@@ -20675,7 +21042,7 @@ module.exports = class ErrorModal extends React.Component {
     return React.createElement(
       'div',
       { id: 'errors' },
-      React.createElement(Header, { type: this.props.type === 'notConnected' ? 'connection' : 'error' }),
+      React.createElement(Header, { dialog: this.props.dialog, type: this.props.type === 'notConnected' ? 'connection' : 'error' }),
       React.createElement(
         'p',
         { className: 'message' },
@@ -20696,21 +21063,80 @@ module.exports = class ErrorModal extends React.Component {
 /***/ (function(module, exports, __webpack_require__) {
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
 
 module.exports = class Dropdown extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      active: false
+    };
+  }
+
+  toggleMenu() {
+    this.setState({ active: !this.state.active });
+  }
+
+  logout() {
+    _.storage.set('authToken', null);
+    _.storage.set('userDetails', null);
+    this.props.dialog.close();
   }
 
   render() {
     return React.createElement(
-      "div",
-      { id: "header-dropdown-container" },
+      'div',
+      { id: 'header-dropdown-container', ref: 'container' },
       React.createElement(
-        "div",
-        { className: "trigger" },
-        React.createElement("img", { className: "dots", src: "plugin/images/icon-dots-dark.png" })
-      )
+        'div',
+        { className: `trigger ${this.state.active ? 'active' : ''}`, onClick: this.toggleMenu.bind(this) },
+        React.createElement('img', { className: 'dots', src: `plugin/images/icon-dots-dark.png` })
+      ),
+      this.state.active ? React.createElement(
+        'nav',
+        { id: 'dropdown-navigation' },
+        React.createElement(
+          'ul',
+          null,
+          React.createElement(
+            'li',
+            null,
+            React.createElement(
+              'p',
+              { onClick: this.logout.bind(this) },
+              'Log out'
+            )
+          ),
+          React.createElement(
+            'li',
+            null,
+            React.createElement(
+              'a',
+              { href: `${_.config.siteUrl}/account` },
+              'Account settings'
+            )
+          ),
+          React.createElement(
+            'li',
+            { className: 'divider' },
+            React.createElement(
+              'a',
+              { href: _.config.helpUrl },
+              'Need help?'
+            )
+          ),
+          React.createElement(
+            'li',
+            null,
+            React.createElement(
+              'a',
+              { href: _.config.siteUrl },
+              'Visit Dribbble.com'
+            )
+          )
+        )
+      ) : null
     );
   }
 };
@@ -20730,11 +21156,15 @@ const Dropdown = __webpack_require__(/*! ./Dropdown.jsx */ "./plugin/components/
 const titleTypes = {
   error: {
     text: 'Whoops!',
-    icon: 'sad-face.png'
+    icon: 'x-cloud.png'
+  },
+  success: {
+    text: 'Success!',
+    icon: 'check-cloud.png'
   },
   connection: {
     text: 'No connection',
-    icon: 'no-connection.png'
+    icon: 'x-cloud.png'
   },
   share: {
     text: 'Share this selection',
@@ -20768,7 +21198,7 @@ module.exports = class Header extends React.Component {
               React.createElement('img', { src: 'plugin/images/dribbble-logo.png' })
             )
           ),
-          React.createElement(Dropdown, null)
+          React.createElement(Dropdown, { dialog: this.props.dialog })
         ),
         React.createElement(
           'p',
@@ -20812,8 +21242,10 @@ module.exports = class Actions extends React.Component {
   messages(status) {
     return {
       login: 'To share your work from Adobe XD, please log in.',
+      authing: 'Once authenticated in your browser, hit Okay.',
+      authfail: 'We couldn’t get your auth token. Try again?',
+      loading: 'One moment, we’re checking Dribbble...',
       error: 'Something went wrong. Want to try again?',
-      timeout: 'Sorry, that took too long to complete. Try again?',
       success: 'You’re all set! Re-open this dialog to start sharing.'
     }[status];
   }
@@ -20826,61 +21258,73 @@ module.exports = class Actions extends React.Component {
     const authUrl = `${_.config.siteUrl}/auth/plugin?state=${_.config.platformIdentifier}-${this.state.sessionId}`;
     uxp.shell.openExternal(authUrl);
 
+    this.setState({ status: 'authing' });
+  }
+
+  checkAuthedState() {
     this.setState({ status: 'loading' });
 
-    _.pollRequest({
+    const checkParams = _.serializeObject({
+      code: this.state.sessionId,
+      platform: _.config.platformIdentifier
+    });
+
+    const checkHeaders = {};
+    if ("dribbble:bananastand$$" != null) {
+      checkHeaders['Authorization'] = `Basic ${btoa("dribbble:bananastand$$")}`;
+    }
+
+    _.retriableFetch(`${_.config.siteUrl}/auth/plugin/check?${checkParams}`, {
       method: 'GET',
-      url: `${_.config.siteUrl}/auth/plugin/check`,
-      params: {
-        code: this.state.sessionId,
-        provider: _.config.platformIdentifier
-      }
-    }).then(request => {
-      if (request.status === 200) {
-        var result = JSON.parse(request.responseText);
-
-        _.settings.access().then(settings => {
-          settings.set('authToken', result.token);
-        });
-
+      headers: checkHeaders
+    }).then(response => {
+      response.json().then(data => {
+        _.storage.set('authToken', data.token);
         this.setState({ status: 'success' });
-      } else {
-        console.log(`Error logging in: ${request.status}`);
-        this.setState({ status: 'error' });
-      }
-    }).catch(response => {
-      let message = '';
-
-      if (response.state === 'quit') {
-        this.setState({ status: 'timeout' });
-      } else if (response.state === 'error') {
-        console.log(`Error logging in: ${response.error}`);
-        this.setState({ status: 'error' });
-      }
+      }).catch(error => {
+        this.setState({ status: 'authfail' });
+      });
+    }).catch(error => {
+      this.setState({ status: 'error' });
     });
   }
 
   render() {
-    if (this.state.status === 'loading') {
-      // This might be better suited in a component for re-use
-      return React.createElement(
-        'div',
-        { id: 'login-footer' },
-        React.createElement(
+    switch (this.state.status) {
+      case 'loading':
+        var activeButton = React.createElement(
           'div',
-          { className: 'loading-outer', title: 'Please visit the page opened in your browser.' },
+          { className: 'loading-button' },
+          React.createElement('img', { src: 'plugin/images/processing.gif' }),
           React.createElement(
-            'div',
-            { className: 'loading-inner' },
-            React.createElement('img', { src: 'plugin/images/processing.gif' }),
-            React.createElement(
-              'span',
-              null,
-              'Waiting...'
-            )
+            'span',
+            null,
+            'Waiting...'
           )
-        )
-      );
+        );
+        break;
+      case 'authing':
+      case 'authfail':
+        var activeButton = React.createElement(
+          'button',
+          { onClick: this.checkAuthedState.bind(this), 'uxp-variant': 'cta' },
+          'Okay'
+        );
+        break;
+      case 'error':
+        var activeButton = React.createElement(
+          'button',
+          { onClick: this.launchLogin.bind(this), 'uxp-variant': 'cta' },
+          'Try again'
+        );
+        break;
+      case 'login':
+        var activeButton = React.createElement(
+          'button',
+          { onClick: this.launchLogin.bind(this), 'uxp-variant': 'cta' },
+          'Login to Dribbble'
+        );
+        break;
     }
 
     return React.createElement(
@@ -20907,11 +21351,7 @@ module.exports = class Actions extends React.Component {
             { onClick: this.dismissDialog.bind(this) },
             'Cancel'
           ),
-          React.createElement(
-            'button',
-            { onClick: this.launchLogin.bind(this), 'uxp-variant': 'cta' },
-            'Log in to Dribbble'
-          )
+          activeButton
         ),
         React.createElement('div', { className: 'spacer' })
       )
@@ -20957,23 +21397,31 @@ module.exports = class Header extends React.Component {
       React.createElement(
         'header',
         { className: 'container', style: { backgroundColor: this.state.shot.backgroundColor } },
-        React.createElement('div', { className: 'shot-image', style: { backgroundImage: `url('plugin/images/shots/${this.state.shot.filename}')`, backgroundSize: 'cover' }, title: `${this.state.shot.title} by ${this.state.shot.user}`, onClick: this.launchShot.bind(this) }),
+        React.createElement('a', {
+          title: `${this.state.shot.title} by ${this.state.shot.user}`,
+          onClick: this.launchShot.bind(this),
+          className: 'shot-image',
+          style: {
+            backgroundImage: `url('plugin/images/shots/${this.state.shot.filename}')`,
+            backgroundSize: 'cover'
+          }
+        }),
         React.createElement(
           'div',
           { className: 'logo', onClick: this.launchSite },
-          React.createElement('img', { src: `plugin/images/dribbble-logo-large-${this.state.shot.theme}.png` })
+          React.createElement('img', { src: `plugin/images/dribbble-logo-large-${this.state.shot.logo}.png` })
         ),
         React.createElement(
           'div',
           { className: `info ${this.state.shot.theme}` },
           React.createElement(
             'h1',
-            null,
+            { style: { color: this.state.shot.headingColor } },
             'What are you working on?'
           ),
           React.createElement(
             'p',
-            null,
+            { style: { color: this.state.shot.textColor } },
             'Dribbble is a community of designers sharing screenshots of their work, process, and projects.'
           )
         ),
@@ -21027,71 +21475,349 @@ module.exports = [{
   title: 'Saturn Hula Hooping',
   url: 'https://dribbble.com/shots/4252236-Saturn-Hula-Hooping',
   backgroundColor: '#38216B',
-  theme: 'light'
-}, {
-  filename: 'designing-for-humans.jpg',
-  user: 'maryanne',
-  title: 'Designing for humans in a digital world',
-  url: 'https://dribbble.com/shots/3665326-Designing-for-humans-in-a-digital-world',
-  backgroundColor: '#FFF2E9',
-  theme: 'dark'
-}, {
-  filename: 'cosmic-sneak-peek.png',
-  user: 'Radostina Georgieva',
-  title: 'Cosmic Sneak Peek',
-  url: 'https://dribbble.com/shots/4249027-Cosmic-Sneak-Peek',
-  backgroundColor: '#DEE8F4',
-  theme: 'dark'
+  textColor: '#ff616e',
+  headingColor: '#fff',
+  logo: 'light'
 }, {
   filename: 'connected-to-nature.png',
   user: 'Julia',
   title: 'Feeling connected to nature',
   url: 'https://dribbble.com/shots/3905987-Feeling-connected-to-nature',
   backgroundColor: '#fff',
-  theme: 'dark'
+  textColor: '#444',
+  headingColor: '#FF5A6D',
+  logo: 'dark'
 }, {
   filename: 'taxi-driver.gif',
   user: 'Aslan A.',
   title: 'MyTaxi Driver',
   url: 'https://dribbble.com/shots/4015806-MyTaxi-Driver',
   backgroundColor: '#FECC02',
-  theme: 'dark'
+  textColor: '#494949',
+  headingColor: '#FDFDFD',
+  logo: 'dark'
 }, {
   filename: 'wednesday.gif',
   user: 'Jonas Mosesson',
   title: 'Wednesday',
   url: 'https://dribbble.com/shots/3050083-Wednesday',
   backgroundColor: '#F5F4E1',
-  theme: 'dark'
-}, {
-  filename: 'proposal-girl.jpg',
-  user: 'Katiuska Pino',
-  title: 'Girl',
-  url: 'https://dribbble.com/shots/4828188-Girl',
-  backgroundColor: '#E35899',
-  theme: 'light'
+  textColor: '#3F4037',
+  headingColor: '#9FD554',
+  logo: 'dark'
 }, {
   filename: 'fridaybeers.gif',
   user: 'Animade',
   title: 'Friday Beers',
   url: 'https://dribbble.com/shots/4794274-Friday-Beers',
   backgroundColor: '#406DEB',
-  theme: 'light'
+  textColor: '#fff',
+  headingColor: '#E7B70C',
+  logo: 'light'
 }, {
   filename: 'pigeon.gif',
   user: 'EJ Hassenfratz',
   title: 'Carrier Pigeon',
   url: 'https://dribbble.com/shots/4833060-Carrier-Pigeon',
   backgroundColor: '#75D999',
-  theme: 'light'
+  textColor: '#FFFFEE',
+  headingColor: '#4D4D4D',
+  logo: 'light'
 }, {
-  filename: 'crayon.jpg',
-  user: 'Joseph Chernashki',
-  title: 'Crayon pattern',
-  url: 'https://dribbble.com/shots/4882170-Crayon-pattern',
-  backgroundColor: '#FFFBEF',
-  theme: 'dark'
+  user: 'DKNG',
+  title: 'La Jolla Art Print',
+  url: 'https://dribbble.com/shots/3974880-La-Jolla-Art-Print',
+  backgroundColor: '#D3CDBF',
+  textColor: '#AF7957',
+  headingColor: '#4D373A',
+  filename: 'dkng.png',
+  logo: 'light'
+}, {
+  user: 'Jerzy Wierzy',
+  title: 'Through the window',
+  url: 'https://dribbble.com/shots/4872690-Through-the-window',
+  backgroundColor: '#2E3192',
+  textColor: '#FB4B33',
+  headingColor: '#FFF',
+  filename: 'jerzy.gif',
+  logo: 'light'
+}, {
+  user: 'Justin Mezzell',
+  title: 'I Saw It On Twitch: Monument Valley',
+  url: 'https://dribbble.com/shots/3554224-I-Saw-It-On-Twitch-Monument-Valley',
+  backgroundColor: '#fbede9',
+  textColor: '#FC7174',
+  headingColor: '#3E598E',
+  filename: 'jmezz.png',
+  logo: 'dark'
+}, {
+  user: 'Tim Boelaars',
+  title: 'Henrik the Hen.',
+  url: 'https://dribbble.com/shots/2472773-Henrik-the-Hen',
+  backgroundColor: '#FFD292',
+  textColor: '#925A1C',
+  headingColor: '#000000',
+  filename: 'timboelaars.png',
+  logo: 'dark'
+}, {
+  user: 'Nick Slater',
+  title: 'Road Runner',
+  url: 'https://dribbble.com/shots/2673544-Road-Runner',
+  backgroundColor: '#E9E6DF',
+  textColor: '#9B8762',
+  headingColor: '#E96149',
+  filename: 'nickslater.jpg',
+  logo: 'dark'
+}, {
+  user: 'Dennis Salvatier',
+  title: 'Its\'a Me Time',
+  url: 'https://dribbble.com/shots/5105301-Its-a-Me-Time',
+  backgroundColor: '#FDFEEC',
+  textColor: '#FF2D6E',
+  headingColor: '#31759A',
+  filename: 'itsa-me-time_dennis-salvatier.jpg',
+  logo: 'dark'
+}, {
+  user: 'Marie Bergeron',
+  title: 'Breath of the Wild x Screenprint',
+  url: 'https://dribbble.com/shots/3692195-Breath-of-the-Wild-x-Screenprint',
+  backgroundColor: '#F5EBC9',
+  textColor: '#FF4D60',
+  headingColor: '#37055A',
+  filename: 'botw.png',
+  logo: 'dark'
+}, {
+  user: 'Richard Perez',
+  title: 'Just Happy to be Here',
+  url: 'https://dribbble.com/shots/4383362-Just-Happy-to-be-Here',
+  username: 'skinnyships',
+  backgroundColor: '#2A1A03',
+  textColor: '#3055C4',
+  headingColor: '#FFFFFF',
+  filename: 'spacecade_800.png',
+  logo: 'light'
 }];
+
+/***/ }),
+
+/***/ "./plugin/components/share/AccountSelector.jsx":
+/*!*****************************************************!*\
+  !*** ./plugin/components/share/AccountSelector.jsx ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
+
+module.exports = class AccountSelector extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const availableAccounts = [];
+
+    availableAccounts.push({
+      id: this.props.user.id,
+      name: this.props.user.name,
+      avatar: this.props.user.avatar_url,
+      isTeam: false
+    });
+
+    this.props.user.teams.forEach(team => {
+      availableAccounts.push({
+        id: team.id,
+        name: team.name,
+        avatar: team.avatar_url,
+        isTeam: true
+      });
+    });
+
+    this.state = {
+      selected: availableAccounts[0],
+      available: availableAccounts,
+      canChange: availableAccounts.length > 1,
+      selectorActive: false
+    };
+  }
+
+  toggleSelector() {
+    if (!this.state.canChange) {
+      return;
+    }
+
+    this.setState({
+      active: !this.state.active
+    });
+  }
+
+  selectAccount(id) {
+    this.setState({
+      selected: this.state.available.find(account => account.id === id),
+      active: false
+    });
+
+    const selectedAccount = id === this.props.user.id ? null : id;
+    this.props.selectedAccountChanged(selectedAccount);
+  }
+
+  render() {
+    return React.createElement(
+      'div',
+      { id: 'account-selector-container' },
+      React.createElement(
+        'div',
+        { onClick: this.toggleSelector.bind(this), className: `current-account-toggle ${this.state.canChange ? 'toggleable' : ''} ${this.state.active ? 'active' : ''}` },
+        React.createElement(
+          'div',
+          { className: 'thumb-container' },
+          React.createElement('img', { src: this.state.selected.avatar, alt: this.state.selected.name })
+        ),
+        React.createElement(
+          'p',
+          { className: 'name' },
+          React.createElement(
+            'span',
+            { className: 'label' },
+            'Posting as'
+          ),
+          React.createElement(
+            'span',
+            { className: 'userName' },
+            this.state.selected.name,
+            ' \u25BE'
+          )
+        )
+      ),
+      this.state.canChange && this.state.active ? React.createElement(
+        'div',
+        { className: `account-selections` },
+        this.state.available.map(account => {
+          return React.createElement(
+            'p',
+            { onClick: this.selectAccount.bind(this, account.id), key: account.id },
+            React.createElement('img', { src: account.avatar, alt: account.name }),
+            React.createElement(
+              'span',
+              null,
+              account.name
+            )
+          );
+        })
+      ) : null
+    );
+  }
+};
+
+/***/ }),
+
+/***/ "./plugin/components/share/Form.jsx":
+/*!******************************************!*\
+  !*** ./plugin/components/share/Form.jsx ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
+const TokenField = __webpack_require__(/*! ../common/TokenField.jsx */ "./plugin/components/common/TokenField.jsx");
+
+module.exports = class Form extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+    this.props.setTitleState(this.refs.titleField.value);
+  }
+
+  render() {
+    return React.createElement(
+      'form',
+      { id: 'shot-form', ref: 'shotForm' },
+      this.props.selectedAccount ? React.createElement('input', { type: 'hidden', name: 'team_id', value: this.props.selectedAccount }) : null,
+      React.createElement(
+        'div',
+        { className: 'left-column' },
+        this.props.preview,
+        React.createElement(
+          'label',
+          { className: 'checkbox-container' },
+          React.createElement('input', { type: 'checkbox', name: 'low_profile', value: 'true' }),
+          React.createElement(
+            'span',
+            null,
+            'Hide from my default profile'
+          )
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'right-column' },
+        React.createElement(
+          'label',
+          { className: 'text-field-container' },
+          React.createElement(
+            'span',
+            null,
+            'Title'
+          ),
+          React.createElement('input', { ref: 'titleField', type: 'text', name: 'title', placeholder: 'Title of your shot', defaultValue: this.props.node.name, onChange: this.props.setTitleState })
+        ),
+        React.createElement(
+          'label',
+          { className: 'text-field-container' },
+          React.createElement(
+            'span',
+            null,
+            'Tags'
+          ),
+          React.createElement(TokenField, { name: 'tags', placeholder: 'adobexd' })
+        ),
+        React.createElement(
+          'label',
+          { className: 'text-field-container' },
+          React.createElement(
+            'span',
+            null,
+            'Description'
+          ),
+          React.createElement('textarea', { name: 'description', placeholder: 'Tell us about your process and how you arrived at this design' })
+        )
+      )
+    );
+  }
+};
+
+/***/ }),
+
+/***/ "./plugin/components/share/Preview.jsx":
+/*!*********************************************!*\
+  !*** ./plugin/components/share/Preview.jsx ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
+
+module.exports = class Preview extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.MAX_IMAGE_WIDTH = 220;
+  }
+
+  render() {
+    return React.createElement(
+      'div',
+      { id: 'shot-preview' },
+      React.createElement('img', {
+        src: `data:image/png;base64,${this.props.imageData}`,
+        style: { height: this.MAX_IMAGE_WIDTH * this.props.height / this.props.width }
+      })
+    );
+  }
+};
 
 /***/ }),
 
@@ -21105,125 +21831,221 @@ module.exports = [{
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
 const Header = __webpack_require__(/*! ../header/Header.jsx */ "./plugin/components/header/Header.jsx");
+const Preview = __webpack_require__(/*! ./Preview.jsx */ "./plugin/components/share/Preview.jsx");
+const Form = __webpack_require__(/*! ./Form.jsx */ "./plugin/components/share/Form.jsx");
+const AccountSelector = __webpack_require__(/*! ./AccountSelector.jsx */ "./plugin/components/share/AccountSelector.jsx");
 
 module.exports = class ShareModal extends React.Component {
   constructor(props) {
     super(props);
 
-    this.MAX_IMAGE_WIDTH = 220;
-
     this.state = {
-      loading: true,
-      imageData: null
+      headerType: 'share',
+      status: 'loading',
+      submitting: false,
+      imageData: null,
+      selectedAccount: null,
+      shotUrl: null
     };
-  }
-
-  componentDidMount() {
-    _.imageBase64FromNode(this.props.node).then(result => {
-      this.setState({
-        loading: false,
-        imageData: result
-      });
-
-      this.forceUpdate();
-    });
   }
 
   dismissDialog() {
     this.props.dialog.close();
   }
 
+  componentDidMount() {
+    if (!this.props.user) {
+      const requestHeaders = new Headers();
+      requestHeaders.append('Authorization', `Bearer ${this.props.auth}`);
+
+      fetch(`${_.config.apiUrl}/user`, {
+        method: 'GET',
+        headers: requestHeaders
+      }).then(response => {
+        response.json().then(user => {
+          this.setState({ user: user });
+          _.storage.set('userDetails', user);
+        }).catch(error => {
+          console.log(error);
+        });
+      });
+    } else {
+      this.setUpContents();
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.status === 'loading') {
+      this.setUpContents();
+    }
+  }
+
+  setUpContents() {
+    _.imageBase64FromNode(this.props.node).then(imageData => {
+      this.setState({
+        status: 'ready',
+        imageData: imageData
+      });
+
+      this.forceUpdate();
+    });
+  }
+
   submitShot() {
-    let formData = _.serialize(this.refs.shotForm, { hash: true });
-    // TODO: implement this!
-    console.log(formData);
+    this.setState({ submitting: true });
+
+    const formData = new FormData(this.refs.shotForm.refs.shotForm);
+    const imageBlob = _.b64toBlob(this.state.imageData, 'image/png');
+    formData.append('image', imageBlob);
+
+    const requestHeaders = new Headers();
+    requestHeaders.append('Authorization', `Bearer ${this.props.auth}`);
+
+    fetch(`${_.config.apiUrl}/shots`, {
+      method: 'POST',
+      headers: requestHeaders,
+      body: formData
+    }).then(response => {
+      if (response.status === 202) {
+        const splitUrl = response.headers.get('location').split('/');
+
+        this.setState({
+          headerType: 'success',
+          status: 'success',
+          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
+        });
+      } else {
+        this.setState({
+          headerType: 'error',
+          status: 'error'
+        });
+      }
+    }).catch(err => {
+      console.log(err);
+
+      this.setState({
+        headerType: 'error',
+        status: 'error'
+      });
+    });
+  }
+
+  setTitleState(input) {
+    const value = input.target ? input.target.value : input;
+    this.setState({
+      title: value
+    });
+  }
+
+  selectedAccountChanged(selectedAccount) {
+    this.setState({
+      selectedAccount: selectedAccount
+    });
   }
 
   render() {
-    return React.createElement(
-      'div',
-      { id: 'share-sheet' },
-      React.createElement(Header, { type: 'share' }),
-      this.state.loading ? React.createElement(
-        'div',
-        { className: 'loading-container' },
-        React.createElement('img', { className: 'loading-image', src: 'plugin/images/processing.gif' })
-      ) : React.createElement(
-        'div',
-        null,
-        React.createElement(
-          'form',
-          { method: 'dialog', ref: 'shotForm' },
+    const user = this.props.user || this.state.user;
+
+    switch (this.state.status) {
+      case 'loading':
+        var view = React.createElement(
+          'div',
+          { className: 'loading-container' },
+          React.createElement('img', { className: 'loading-image', src: 'plugin/images/processing.gif' })
+        );
+        break;
+      case 'success':
+        var view = React.createElement(
+          'div',
+          { id: 'share-message' },
           React.createElement(
-            'div',
-            { className: 'left-column' },
+            'p',
+            null,
+            'Your shot has been posted. You can ',
             React.createElement(
-              'div',
-              { className: 'preview' },
-              React.createElement('img', { src: `data:image/png;base64,${this.state.imageData}`, style: { height: this.props.node.height * (this.MAX_IMAGE_WIDTH / this.props.node.width) } })
+              'a',
+              { href: this.state.shotUrl },
+              'see it here'
             ),
+            '.'
+          ),
+          React.createElement(
+            'button',
+            { onClick: this.dismissDialog.bind(this), 'uxp-variant': 'cta' },
+            'Okay'
+          )
+        );
+        break;
+      case 'error':
+        var view = React.createElement(
+          'div',
+          { id: 'share-message' },
+          React.createElement(
+            'p',
+            null,
+            'Something went wrong on our end. You might want to try again. If this issue continues please ',
             React.createElement(
-              'label',
-              { className: 'row' },
-              React.createElement('input', { type: 'checkbox', name: 'low_profile', value: 'true' }),
+              'a',
+              { href: `${_.config.siteUrl}/contact` },
+              'contact us'
+            ),
+            '.'
+          ),
+          React.createElement(
+            'button',
+            { onClick: this.dismissDialog.bind(this), 'uxp-variant': 'cta' },
+            'Okay'
+          )
+        );
+        break;
+      case 'ready':
+        var view = React.createElement(
+          'div',
+          null,
+          React.createElement(Form, {
+            ref: 'shotForm',
+            node: this.props.node,
+            selectedAccount: this.state.selectedAccount,
+            setTitleState: this.setTitleState.bind(this),
+            preview: React.createElement(Preview, {
+              imageData: this.state.imageData,
+              width: this.props.node.width,
+              height: this.props.node.height
+            }) }),
+          React.createElement(
+            'footer',
+            null,
+            React.createElement(AccountSelector, { user: user, selectedAccountChanged: this.selectedAccountChanged.bind(this) }),
+            React.createElement('div', { className: 'spacer' }),
+            React.createElement(
+              'button',
+              { onClick: this.dismissDialog.bind(this), className: 'adtl' },
+              'Cancel'
+            ),
+            this.state.submitting ? React.createElement(
+              'div',
+              { className: 'loading-button' },
+              React.createElement('img', { src: 'plugin/images/processing.gif' }),
               React.createElement(
                 'span',
                 null,
-                'Hide from my profile'
+                'Hold tight!'
               )
-            )
-          ),
-          React.createElement(
-            'div',
-            { className: 'right-column' },
-            React.createElement(
-              'label',
-              null,
-              React.createElement(
-                'span',
-                { className: 'field-label' },
-                'Title'
-              ),
-              React.createElement('input', { type: 'text', name: 'title', placeholder: 'Title of your shot', value: this.props.node.name })
-            ),
-            React.createElement(
-              'label',
-              null,
-              React.createElement(
-                'span',
-                { className: 'field-label' },
-                'Tags'
-              ),
-              React.createElement('input', { type: 'text', name: 'tags', placeholder: 'adobe-xd' })
-            ),
-            React.createElement(
-              'label',
-              null,
-              React.createElement(
-                'span',
-                { className: 'field-label' },
-                'Description'
-              ),
-              React.createElement('textarea', { name: 'description', placeholder: 'Tell us about your process and how you arrived at this design' })
+            ) : React.createElement(
+              'button',
+              { onClick: this.submitShot.bind(this), disabled: !this.state.title, 'uxp-variant': 'cta' },
+              'Share to Dribbble'
             )
           )
-        ),
-        React.createElement(
-          'footer',
-          null,
-          React.createElement('div', { className: 'spacer' }),
-          React.createElement(
-            'button',
-            { onClick: this.dismissDialog.bind(this) },
-            'Cancel'
-          ),
-          React.createElement(
-            'button',
-            { onClick: this.submitShot.bind(this), 'uxp-variant': 'cta' },
-            'Share to Dribbble'
-          )
-        )
-      )
+        );
+        break;
+    }
+
+    return React.createElement(
+      'div',
+      { id: 'share-sheet', ref: 'container' },
+      React.createElement(Header, { type: this.state.headerType }),
+      view
     );
   }
 };
@@ -21237,32 +22059,24 @@ module.exports = class ShareModal extends React.Component {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-const platformIdentifier = 'xd';
-
-const apiKey = "62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5";
-const siteUrl = `https://${"staging.dribbble.com"}`;
-const apiUrl = `https://api.${"staging.dribbble.com"}/v2`;
-
-// Dribbble requires a shot to
-// be at least 400x300 pixels
-const dimensionReqs = {
-  width: 400,
-  height: 300
-};
-
-const allowedNodeTypes = ['Artboard', 'Rectangle',
-
-// This isn't a real node type, but we'll
-// use it for creating a string
-'Image'];
-
 module.exports = {
-  platformIdentifier,
-  apiKey,
-  siteUrl,
-  apiUrl,
-  dimensionReqs,
-  allowedNodeTypes
+  platformIdentifier: 'xd',
+
+  apiKey: "62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5",
+  siteUrl: `https://${"staging.dribbble.com"}`,
+  apiUrl: `https://api-${"staging.dribbble.com"}/v2`,
+  helpUrl: `https://help.dribbble.com/`,
+
+  dimensionReqs: {
+    width: 400,
+    height: 300
+  },
+
+  allowedNodeTypes: ['Artboard', 'Rectangle',
+
+  // This isn't a real node type, but we'll
+  // use it for creating a string
+  'Image']
 };
 
 /***/ }),
@@ -21294,7 +22108,9 @@ module.exports = class {
       eventHandler.call(this);
     }
 
-    return this.el.showModal();
+    return this.el.showModal().catch(err => {
+      /* noop for now */
+    });
   }
 
   close() {
@@ -21308,91 +22124,82 @@ module.exports = class {
 
 /***/ }),
 
-/***/ "./plugin/library/settings.js":
-/*!************************************!*\
-  !*** ./plugin/library/settings.js ***!
-  \************************************/
+/***/ "./plugin/library/storage.js":
+/*!***********************************!*\
+  !*** ./plugin/library/storage.js ***!
+  \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const fs = __webpack_require__(/*! uxp */ "uxp").storage.localFileSystem;
+/*
+ * Copyright (c) 2018. by Pablo Klaschka
+ */
 
-module.exports = class {
-  constructor() {
-    this.settingsFileName = 'dribbble-xd-settings.json';
-    this.defaultSettings = {
-      authToken: null
-    };
-  }
+const storage = __webpack_require__(/*! uxp */ "uxp").storage;
+const fs = storage.localFileSystem;
 
-  access() {
-    return new Promise((resolve, reject) => {
-      fs.getDataFolder().then(folder => {
-        this.pluginDataFolder = folder;
+class storageHelper {
+    /**
+     * Creates a data file if none was previously existent.
+     * @return {Promise<storage.File>} The data file
+     * @private
+     */
+    static async init() {
+        let dataFolder = await fs.getDataFolder();
+        try {
+            const file = await dataFolder.getEntry('data.json');
+            if (file) {
+                // noinspection JSValidateTypes
+                return file;
+            } else {
+                throw new Error('file data.json was not a file.');
+            }
+        } catch (err) {
+            const file = await dataFolder.createEntry('data.json', { type: storage.types.file, overwrite: true });
+            if (file.isFile) {
+                await file.write('{}', { append: false });
+                // noinspection JSValidateTypes
+                return file;
+            } else {
+                throw new Error('file data.json was not a file.');
+            }
+        }
+    }
 
-        this.pluginDataFolder.getEntry(this.settingsFileName).then(file => {
-          this.settingsFile = file;
+    /**
+     * Retrieves a value from storage. Saves default value if none is set.
+     * @param {string} key The identifier
+     * @param {*} defaultValue The default value. Gets saved and returned if no value was previously set for the speciefied key.
+     * @return {Promise<*>} The value retrieved from storage. If none is saved, the `defaultValue` is returned.
+     */
+    static async get(key, defaultValue) {
+        const dataFile = await this.init();
+        const data = await dataFile.read({ format: storage.formats.utf8 });
+        let object = JSON.parse(data.toString());
+        if (object[key] === undefined) {
+            await this.set(key, defaultValue);
+            return defaultValue;
+        } else {
+            return object[key];
+        }
+    }
 
-          this.settingsFile.read().then(data => {
-            this.settingsData = JSON.parse(data);
-            resolve(this);
-          }).catch(error => {
-            reject(error);
-          });
-        }).catch(error => {
-          const notFound = error.toString().includes('not found');
+    /**
+     * Saves a certain key-value-pair to the storage.
+     * @param {string} key The identifier
+     * @param {*} value
+     * @return {Promise<void>}
+     */
+    static async set(key, value) {
+        const dataFile = await this.init();
+        const data = await dataFile.read({ format: storage.formats.utf8 });
+        let object = JSON.parse(data.toString());
+        object[key] = value;
+        return await dataFile.write(JSON.stringify(object), { append: false, format: storage.formats.utf8 });
+    }
+}
 
-          if (!notFound) {
-            reject(error);
-          }
-
-          this.pluginDataFolder.createEntry(this.settingsFileName).then(file => {
-            this.settingsFile = file;
-            this.settingsData = this.defaultSettings;
-
-            this.save().then(() => {
-              resolve(this);
-            });
-          });
-        });
-      }).catch(error => {
-        reject(error);
-      });
-    });
-  }
-
-  get(key, fallback) {
-    return this.settingsData[key] || fallback;
-  }
-
-  set(key, value) {
-    return new Promise((resolve, reject) => {
-
-      console.log(this.settingsData);
-
-      console.log(key, value);
-      this.settingsData[key] = value;
-
-      this.save().then(() => {
-        resolve(this);
-      }).catch(error => {
-        reject(error);
-      });
-    });
-  }
-
-  save() {
-    return new Promise((resolve, reject) => {
-      const data = JSON.stringify(this.settingsData, null, 2);
-
-      this.settingsFile.write(data).then(() => {
-        resolve(this);
-      }).catch(error => {
-        reject(error);
-      });
-    });
-  }
-};
+module.exports = storageHelper;
 
 /***/ }),
 
@@ -21403,9 +22210,34 @@ module.exports = class {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! ../vendor/base64 */ "./plugin/vendor/base64.js");
+// === Begin environment setup
+
+/**
+ * The XD environment does not provide setTimeout or clearTimeout.
+ * React uses these, so we need to stub them out for now.
+ */
+window.setTimeout = function (fn) {
+  fn();
+};
+window.clearTimeout = function () {};
+
+/**
+ * The XD environment does not provide btoa, atob, Blob, or FormData.
+ * Polyfill them until they are supported.
+ */
+const { btoa, atob } = __webpack_require__(/*! Base64 */ "./node_modules/Base64/base64.js");
+window.btoa = btoa;
+window.atob = atob;
+
+const { Blob } = __webpack_require__(/*! blob-polyfill */ "./node_modules/blob-polyfill/Blob.js");
+window.Blob = Blob;
+
+__webpack_require__(/*! formdata-polyfill */ "./node_modules/formdata-polyfill/formdata.min.js");
+
+// === End environment setup
+
 const serialize = __webpack_require__(/*! ../vendor/serialize */ "./plugin/vendor/serialize.js");
-const Settings = __webpack_require__(/*! ./settings */ "./plugin/library/settings.js");
+const storage = __webpack_require__(/*! ./storage */ "./plugin/library/storage.js");
 const config = __webpack_require__(/*! ./config */ "./plugin/library/config.js");
 const uxp = __webpack_require__(/*! uxp */ "uxp");
 const app = __webpack_require__(/*! application */ "application");
@@ -21488,57 +22320,30 @@ const imageBase64FromNode = async function (node) {
 };
 
 /**
- * XHR helper to poll an address, with max timeout and retries,
- * until a succesful response is returned
+ * Wrapper for Fetch that will retry X number of times
  */
-const pollRequest = function ({ method, url, params = '', timeout = 3000, max = 10 } = {}) {
-  let retryCount = 0;
-
-  const request = new XMLHttpRequest();
-  const serializedParams = serializeObject(params);
-
-  const performRequest = function () {
-    retryCount = retryCount + 1;
-    request.send(serializedParams);
+const retriableFetch = (url, options = {}, config = { retries: 5 }) => {
+  const retry = function (resolve, reject) {
+    config.retries = config.retries - 1;
+    retriableFetch(url, options, config).then(resolve).catch(reject);
   };
 
-  request.timeout = timeout;
-  // Y u no work?
-  // request.responseType = 'json'
-
-  request.open(method, url, true);
-  request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-  if ("dribbble:bananastand$$" != null) {
-    request.setRequestHeader('Authorization', `Basic ${btoa("dribbble:bananastand$$")}`);
-  }
-
   return new Promise((resolve, reject) => {
-    request.addEventListener('load', () => {
-      if (request.status === 200) {
-        try {
-          resolve(request);
-        } catch (error) {
-          reject({ state: 'error', error: `Couldn't parse response. ${error.message}, ${error.response}` });
-        }
-      } else {
-        reject({ state: 'error', error: `Response code ${request.status}` });
-      }
-    });
-
-    request.addEventListener('timeout', () => {
-      if (retryCount === max) {
-        return reject({ state: 'quit' });
+    fetch(url, options).then(response => {
+      if (response.ok) {
+        return resolve(response);
+      } else if (config.retries === 1) {
+        throw error;
       }
 
-      performRequest();
-    });
+      retry(resolve, reject);
+    }).catch(error => {
+      if (config.retries === 1) {
+        throw error;
+      }
 
-    request.addEventListener('error', error => {
-      reject({ state: 'error', error: error });
+      retry(resolve, reject);
     });
-
-    performRequest();
   });
 };
 
@@ -21552,9 +22357,32 @@ const serializeObject = function (obj) {
 };
 
 /**
- * Set up out Settings module
+ * Convert a base64 string in a Blob according to the data and contentType.
+ *
+ * @param b64Data {String} Pure base64 string without contentType
+ * @param contentType {String} the content type of the file i.e (image/jpeg - image/png - text/plain)
+ * @param sliceSize {Int} SliceSize to process the byteCharacters
+ * @see http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+ * @return Blob
  */
-const settings = new Settings();
+const b64toBlob = function (b64Data, contentType = '', sliceSize = 512) {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (var i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  return new Blob(byteArrays, { type: contentType });
+};
 
 module.exports = {
   serialize,
@@ -21565,9 +22393,10 @@ module.exports = {
   randomString,
   pickRandom,
   imageBase64FromNode,
-  pollRequest,
+  retriableFetch,
   serializeObject,
-  settings
+  storage,
+  b64toBlob
 };
 
 /***/ }),
@@ -21581,20 +22410,10 @@ module.exports = {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-/**
- * The XD environment does not provide setTimeout/clearInterval at this time.
- * React uses these, so we need to stub them out for now. Hopefully we can
- * remove them soon.
- */
-global.setTimeout = function (fn) {
-  fn();
-};
-global.clearTimeout = function () {};
-
+const _ = __webpack_require__(/*! ./library/utils */ "./plugin/library/utils.js");
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 const Dialog = __webpack_require__(/*! ./library/dialog */ "./plugin/library/dialog.js");
-const _ = __webpack_require__(/*! ./library/utils */ "./plugin/library/utils.js");
 const style = __webpack_require__(/*! ./style.scss */ "./plugin/style.scss");
 
 const ErrorModal = __webpack_require__(/*! ./components/error/ErrorModal.jsx */ "./plugin/components/error/ErrorModal.jsx");
@@ -21609,8 +22428,8 @@ const shareCommand = async function (s) {
   dialog.el.style.width = '600px';
   dialog.el.style.backgroundColor = '#f4f4f4';
 
-  const settings = await _.settings.access();
-  const authToken = settings.get('authToken');
+  const authToken = await _.storage.get('authToken');
+  const userDetails = await _.storage.get('userDetails');
   const loggedIn = authToken != null;
 
   let Component,
@@ -21635,7 +22454,7 @@ const shareCommand = async function (s) {
     props = { type: 'tooSmall', node: selectedNode };
   } else {
     Component = ShareModal;
-    props = { node: selectedNode };
+    props = { node: selectedNode, user: userDetails, auth: authToken };
   }
 
   ReactDOM.render(React.createElement(Component, _extends({ dialog: dialog }, props)), dialog.el);
@@ -21678,143 +22497,6 @@ var update = __webpack_require__(/*! ../node_modules/style-loader/lib/addStyles.
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
-
-/***/ }),
-
-/***/ "./plugin/vendor/base64.js":
-/*!*********************************!*\
-  !*** ./plugin/vendor/base64.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-/*
- * Implements base64 decode and encode in browser that
- * it hasn't support of window.btoa and window.atob
- * methods.
- * Based in Nick Galbreath
- * http://code.google.com/p/stringencoders/source/browse/#svn/
- * and Carlo Zottmann jQuery port
- * http://github.com/carlo/jquery-base64
- * Adapted by SeViR in DIGIO
- */
-
-if (!window.atob && !window.btoa) {
-  (function (window) {
-    var _PADCHAR = "=",
-        _ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-    function _getbyte64(s, i) {
-      var idx = _ALPHA.indexOf(s.charAt(i));
-
-      if (idx === -1) {
-        throw "Cannot decode base64";
-      }
-
-      return idx;
-    }
-
-    function _decode(s) {
-      var pads = 0,
-          i,
-          b10,
-          imax = s.length,
-          x = [];
-
-      s = String(s);
-
-      if (imax === 0) {
-        return s;
-      }
-
-      if (imax % 4 !== 0) {
-        throw "Cannot decode base64";
-      }
-
-      if (s.charAt(imax - 1) === _PADCHAR) {
-        pads = 1;
-
-        if (s.charAt(imax - 2) === _PADCHAR) {
-          pads = 2;
-        }
-
-        // either way, we want to ignore this last block
-        imax -= 4;
-      }
-
-      for (i = 0; i < imax; i += 4) {
-        b10 = _getbyte64(s, i) << 18 | _getbyte64(s, i + 1) << 12 | _getbyte64(s, i + 2) << 6 | _getbyte64(s, i + 3);
-        x.push(String.fromCharCode(b10 >> 16, b10 >> 8 & 0xff, b10 & 0xff));
-      }
-
-      switch (pads) {
-        case 1:
-          b10 = _getbyte64(s, i) << 18 | _getbyte64(s, i + 1) << 12 | _getbyte64(s, i + 2) << 6;
-          x.push(String.fromCharCode(b10 >> 16, b10 >> 8 & 0xff));
-          break;
-
-        case 2:
-          b10 = _getbyte64(s, i) << 18 | _getbyte64(s, i + 1) << 12;
-          x.push(String.fromCharCode(b10 >> 16));
-          break;
-      }
-
-      return x.join("");
-    }
-
-    function _getbyte(s, i) {
-      var x = s.charCodeAt(i);
-
-      if (x > 255) {
-        throw "INVALID_CHARACTER_ERR: DOM Exception 5";
-      }
-
-      return x;
-    }
-
-    function _encode(s) {
-      if (arguments.length !== 1) {
-        throw "SyntaxError: exactly one argument required";
-      }
-
-      s = String(s);
-
-      var i,
-          b10,
-          x = [],
-          imax = s.length - s.length % 3;
-
-      if (s.length === 0) {
-        return s;
-      }
-
-      for (i = 0; i < imax; i += 3) {
-        b10 = _getbyte(s, i) << 16 | _getbyte(s, i + 1) << 8 | _getbyte(s, i + 2);
-        x.push(_ALPHA.charAt(b10 >> 18));
-        x.push(_ALPHA.charAt(b10 >> 12 & 0x3F));
-        x.push(_ALPHA.charAt(b10 >> 6 & 0x3f));
-        x.push(_ALPHA.charAt(b10 & 0x3f));
-      }
-
-      switch (s.length - imax) {
-        case 1:
-          b10 = _getbyte(s, i) << 16;
-          x.push(_ALPHA.charAt(b10 >> 18) + _ALPHA.charAt(b10 >> 12 & 0x3F) + _PADCHAR + _PADCHAR);
-          break;
-
-        case 2:
-          b10 = _getbyte(s, i) << 16 | _getbyte(s, i + 1) << 8;
-          x.push(_ALPHA.charAt(b10 >> 18) + _ALPHA.charAt(b10 >> 12 & 0x3F) + _ALPHA.charAt(b10 >> 6 & 0x3f) + _PADCHAR);
-          break;
-      }
-
-      return x.join("");
-    }
-
-    window.btoa = _encode;
-    window.atoa = _decode;
-  })(window);
-}
 
 /***/ }),
 

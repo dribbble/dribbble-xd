@@ -4,11 +4,15 @@ const Dropdown = require('./Dropdown.jsx')
 const titleTypes = {
   error: {
     text: 'Whoops!',
-    icon: 'sad-face.png'
+    icon: 'x-cloud.png'
+  },
+  success: {
+    text: 'Success!',
+    icon: 'check-cloud.png'
   },
   connection: {
     text: 'No connection',
-    icon: 'no-connection.png'
+    icon: 'x-cloud.png'
   },
   share: {
     text: 'Share this selection',
@@ -34,7 +38,7 @@ module.exports = class Header extends React.Component {
               </div>
             </div>
 
-            <Dropdown />
+            <Dropdown dialog={this.props.dialog} />
           </div>
 
           <p className="title">

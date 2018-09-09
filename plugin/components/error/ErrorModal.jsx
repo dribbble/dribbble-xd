@@ -30,7 +30,7 @@ module.exports = class ErrorModal extends React.Component {
   render() {
     return (
       <div id="errors">
-        <Header type={this.props.type === 'notConnected' ? 'connection' : 'error'} />
+        <Header dialog={this.props.dialog} type={this.props.type === 'notConnected' ? 'connection' : 'error'} />
         <p className="message">{errorMessages[this.props.type].call(this)}</p>
         <CloseFooter dialog={this.props.dialog} />
       </div>

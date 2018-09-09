@@ -18,7 +18,9 @@ module.exports = class {
       eventHandler.call(this)
     }
 
-    return this.el.showModal()
+    return this.el.showModal().catch((err) => {
+      /* noop for now */
+    })
   }
 
   close() {

@@ -1,15 +1,7 @@
-/**
- * The XD environment does not provide setTimeout/clearInterval at this time.
- * React uses these, so we need to stub them out for now. Hopefully we can
- * remove them soon.
- */
-global.setTimeout = function(fn) { fn() }
-global.clearTimeout = function() {}
-
+const _ = require('./library/utils')
 const React = require('react')
 const ReactDOM = require('react-dom')
 const Dialog = require('./library/dialog')
-const _ = require('./library/utils')
 const style = require('./style.scss')
 
 const ErrorModal = require('./components/error/ErrorModal.jsx')
@@ -24,8 +16,8 @@ const shareCommand = async function(s) {
   dialog.el.style.width = '600px'
   dialog.el.style.backgroundColor = '#f4f4f4'
 
-  const settings = await _.settings.access()
-  const authToken = settings.get('authToken')
+  const authToken = await _.storage.get('authToken')
+  const userDetails = await _.storage.get('userDetails')
   const loggedIn = authToken != null
 
   let Component, props = {}
@@ -49,7 +41,7 @@ const shareCommand = async function(s) {
     props = { type: 'tooSmall', node: selectedNode }
   } else {
     Component = ShareModal
-    props = { node: selectedNode }
+    props = { node: selectedNode, user: userDetails, auth: authToken }
   }
 
   ReactDOM.render(<Component dialog={dialog} {...props} />, dialog.el)

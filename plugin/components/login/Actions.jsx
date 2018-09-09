@@ -15,8 +15,10 @@ module.exports = class Actions extends React.Component {
   messages(status) {
     return ({
       login: 'To share your work from Adobe XD, please log in.',
+      authing: 'Once authenticated in your browser, hit Okay.',
+      authfail: 'We couldn’t get your auth token. Try again?',
+      loading: 'One moment, we’re checking Dribbble...',
       error: 'Something went wrong. Want to try again?',
-      timeout: 'Sorry, that took too long to complete. Try again?',
       success: 'You’re all set! Re-open this dialog to start sharing.'
     })[status]
   }
@@ -29,53 +31,63 @@ module.exports = class Actions extends React.Component {
     const authUrl = `${_.config.siteUrl}/auth/plugin?state=${_.config.platformIdentifier}-${this.state.sessionId}`
     uxp.shell.openExternal(authUrl)
 
+    this.setState({ status: 'authing' })
+  }
+
+  checkAuthedState() {
     this.setState({ status: 'loading' })
 
-    _.pollRequest({
+    const checkParams = _.serializeObject({
+      code: this.state.sessionId,
+      platform: _.config.platformIdentifier
+    })
+
+    const checkHeaders = {}
+    if (STAGING_AUTH != null) {
+      checkHeaders['Authorization'] = `Basic ${btoa(STAGING_AUTH)}`
+    }
+
+    _.retriableFetch(`${_.config.siteUrl}/auth/plugin/check?${checkParams}`, {
       method: 'GET',
-      url: `${_.config.siteUrl}/auth/plugin/check`,
-      params: {
-        code: this.state.sessionId,
-        provider: _.config.platformIdentifier
-      }
-    }).then((request) => {
-      if (request.status === 200) {
-        var result = JSON.parse(request.responseText)
-
-        _.settings.access().then((settings) => {
-          settings.set('authToken', result.token)
-        })
-
+      headers: checkHeaders,
+    }).then((response) => {
+      response.json().then((data) => {
+        _.storage.set('authToken', data.token)
         this.setState({ status: 'success' })
-      } else {
-        console.log(`Error logging in: ${request.status}`)
-        this.setState({ status: 'error' })
-      }
-    }).catch((response) => {
-      let message = ''
-
-      if (response.state === 'quit') {
-        this.setState({ status: 'timeout' })
-      } else if (response.state === 'error') {
-        console.log(`Error logging in: ${response.error}`)
-        this.setState({ status: 'error' })
-      }
+      }).catch((error) => {
+        this.setState({ status: 'authfail' })
+      })
+    }).catch((error) => {
+      this.setState({ status: 'error' })
     })
   }
 
   render() {
-    if (this.state.status === 'loading') {
-      // This might be better suited in a component for re-use
-      return (
-        <div id="login-footer">
-          <div className="loading-outer" title="Please visit the page opened in your browser.">
-            <div className="loading-inner">
-              <img src="plugin/images/processing.gif" />
-              <span>Waiting...</span>
-            </div>
-          </div>
+    switch(this.state.status) {
+    case 'loading':
+      var activeButton = (
+        <div className="loading-button">
+          <img src="plugin/images/processing.gif" />
+          <span>Waiting...</span>
         </div>
       )
+      break
+    case 'authing':
+    case 'authfail':
+      var activeButton = (
+        <button onClick={this.checkAuthedState.bind(this)} uxp-variant="cta">Okay</button>
+      )
+      break
+    case 'error':
+      var activeButton = (
+        <button onClick={this.launchLogin.bind(this)} uxp-variant="cta">Try again</button>
+      )
+      break
+    case 'login':
+      var activeButton = (
+        <button onClick={this.launchLogin.bind(this)} uxp-variant="cta">Login to Dribbble</button>
+      )
+      break
     }
 
     return (
@@ -89,7 +101,7 @@ module.exports = class Actions extends React.Component {
           ) : (
             <div className="button-group">
               <button onClick={this.dismissDialog.bind(this)}>Cancel</button>
-              <button onClick={this.launchLogin.bind(this)} uxp-variant="cta">Log in to Dribbble</button>
+              {activeButton}
             </div>
           ) }
           <div className="spacer"></div>

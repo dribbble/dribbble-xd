@@ -1,88 +1,190 @@
 const React = require('react')
 const _ = require('../../library/utils')
 const Header = require('../header/Header.jsx')
+const Preview = require('./Preview.jsx')
+const Form = require('./Form.jsx')
+const AccountSelector = require('./AccountSelector.jsx')
 
 module.exports = class ShareModal extends React.Component {
   constructor(props) {
     super(props)
 
-    this.MAX_IMAGE_WIDTH = 220
-
     this.state = {
-      loading: true,
-      imageData: null
+      headerType: 'share',
+      status: 'loading',
+      submitting: false,
+      imageData: null,
+      selectedAccount: null,
+      shotUrl: null
     }
-  }
-
-  componentDidMount() {
-    _.imageBase64FromNode(this.props.node).then((result) => {
-      this.setState({
-        loading: false,
-        imageData: result
-      })
-
-      this.forceUpdate()
-    })
   }
 
   dismissDialog() {
     this.props.dialog.close()
   }
 
+  componentDidMount() {
+    if (!this.props.user) {
+      const requestHeaders = new Headers()
+      requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
+
+      fetch(`${_.config.apiUrl}/user`, {
+        method: 'GET',
+        headers: requestHeaders
+      }).then((response) => {
+        response.json().then((user) => {
+          this.setState({ user: user })
+          _.storage.set('userDetails', user)
+        }).catch((error) => {
+          console.log(error)
+        })
+      })
+    } else {
+      this.setUpContents()
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.status === 'loading') {
+      this.setUpContents()
+    }
+  }
+
+  setUpContents() {
+    _.imageBase64FromNode(this.props.node).then((imageData) => {
+      this.setState({
+        status: 'ready',
+        imageData: imageData
+      })
+
+      this.forceUpdate()
+    })
+  }
+
   submitShot() {
-    let formData = _.serialize(this.refs.shotForm, { hash: true })
-    // TODO: implement this!
-    console.log(formData)
+    this.setState({ submitting: true })
+
+    const formData = new FormData(this.refs.shotForm.refs.shotForm)
+    const imageBlob = _.b64toBlob(this.state.imageData, 'image/png')
+    formData.append('image', imageBlob)
+
+    const requestHeaders = new Headers()
+    requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
+
+    fetch(`${_.config.apiUrl}/shots`, {
+      method: 'POST',
+      headers: requestHeaders,
+      body: formData
+    }).then((response) => {
+      if (response.status === 202) {
+        const splitUrl = response.headers.get('location').split('/')
+
+        this.setState({
+          headerType: 'success',
+          status: 'success',
+          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
+        })
+      } else {
+        this.setState({
+          headerType: 'error',
+          status: 'error'
+        })
+      }
+    }).catch((err) => {
+      console.log(err)
+
+      this.setState({
+        headerType: 'error',
+        status: 'error'
+      })
+    })
+  }
+
+  setTitleState(input) {
+    const value = input.target ? input.target.value : input
+    this.setState({
+      title: value
+    })
+  }
+
+  selectedAccountChanged(selectedAccount) {
+    this.setState({
+      selectedAccount: selectedAccount
+    })
   }
 
   render() {
+    const user = this.props.user || this.state.user
+
+    switch(this.state.status)  {
+    case 'loading':
+      var view = (
+        <div className="loading-container">
+          <img className="loading-image" src="plugin/images/processing.gif" />
+        </div>
+      )
+      break
+    case 'success':
+      var view = (
+        <div id="share-message">
+          <p>
+            Your shot has been posted. You can <a href={this.state.shotUrl}>see it here</a>.
+          </p>
+
+          <button onClick={this.dismissDialog.bind(this)} uxp-variant="cta">Okay</button>
+        </div>
+      )
+      break
+    case 'error':
+      var view = (
+        <div id="share-message">
+          <p>
+            Something went wrong on our end. You might want to try again. If this issue
+            continues please <a href={`${_.config.siteUrl}/contact`}>contact us</a>.
+          </p>
+
+          <button onClick={this.dismissDialog.bind(this)} uxp-variant="cta">Okay</button>
+        </div>
+      )
+      break
+    case 'ready':
+      var view = (
+        <div>
+          <Form
+            ref="shotForm"
+            node={this.props.node}
+            selectedAccount={this.state.selectedAccount}
+            setTitleState={this.setTitleState.bind(this)}
+            preview={(
+            <Preview
+              imageData={this.state.imageData}
+              width={this.props.node.width}
+              height={this.props.node.height}
+            />
+          )} />
+
+          <footer>
+            <AccountSelector user={user} selectedAccountChanged={this.selectedAccountChanged.bind(this)} />
+            <div className="spacer"></div>
+            <button onClick={this.dismissDialog.bind(this)} className="adtl">Cancel</button>
+            { this.state.submitting ? (
+              <div className="loading-button">
+                <img src="plugin/images/processing.gif" />
+                <span>Hold tight!</span>
+              </div>
+            ) : (
+              <button onClick={this.submitShot.bind(this)} disabled={!this.state.title} uxp-variant="cta">Share to Dribbble</button>
+            ) }
+          </footer>
+        </div>
+      )
+      break
+    }
+
     return (
-      <div id="share-sheet">
-        <Header type="share" />
-
-        { this.state.loading ? (
-          <div className="loading-container">
-            <img className="loading-image" src="plugin/images/processing.gif" />
-          </div>
-        ) : (
-          <div>
-            <form method="dialog" ref="shotForm">
-              <div className="left-column">
-                <div className="preview">
-                  <img src={`data:image/png;base64,${this.state.imageData}`} style={{ height: this.props.node.height * (this.MAX_IMAGE_WIDTH / this.props.node.width) }} />
-                </div>
-
-                <label className="row">
-                  <input type="checkbox" name="low_profile" value="true" />
-                  <span>Hide from my profile</span>
-                </label>
-              </div>
-
-              <div className="right-column">
-                <label>
-                  <span className="field-label">Title</span>
-                  <input type="text" name="title" placeholder="Title of your shot" value={this.props.node.name} />
-                </label>
-
-                <label>
-                  <span className="field-label">Tags</span>
-                  <input type="text" name="tags" placeholder="adobe-xd" />
-                </label>
-
-                <label>
-                  <span className="field-label">Description</span>
-                  <textarea name="description" placeholder="Tell us about your process and how you arrived at this design"></textarea>
-                </label>
-              </div>
-            </form>
-
-            <footer>
-              <div className="spacer"></div>
-              <button onClick={this.dismissDialog.bind(this)}>Cancel</button>
-              <button onClick={this.submitShot.bind(this)} uxp-variant="cta">Share to Dribbble</button>
-            </footer>
-          </div>
-        ) }
+      <div id="share-sheet" ref="container">
+        <Header type={this.state.headerType} />
+        {view}
       </div>
     )
   }

@@ -1,6 +1,29 @@
-require('../vendor/base64')
+// === Begin environment setup
+
+/**
+ * The XD environment does not provide setTimeout or clearTimeout.
+ * React uses these, so we need to stub them out for now.
+ */
+window.setTimeout = function(fn) { fn() }
+window.clearTimeout = function() {}
+
+/**
+ * The XD environment does not provide btoa, atob, Blob, or FormData.
+ * Polyfill them until they are supported.
+ */
+const { btoa, atob } = require('Base64')
+window.btoa = btoa
+window.atob = atob
+
+const { Blob } = require('blob-polyfill')
+window.Blob = Blob
+
+require('formdata-polyfill')
+
+// === End environment setup
+
 const serialize = require('../vendor/serialize')
-const Settings = require('./settings')
+const storage = require('./storage')
 const config = require('./config')
 const uxp = require('uxp')
 const app = require('application')
@@ -86,57 +109,32 @@ const imageBase64FromNode = async function(node) {
 }
 
 /**
- * XHR helper to poll an address, with max timeout and retries,
- * until a succesful response is returned
+ * Wrapper for Fetch that will retry X number of times
  */
-const pollRequest = function({ method, url, params='', timeout=3000, max=10 }={}) {
-  let retryCount = 0
-
-  const request = new XMLHttpRequest()
-  const serializedParams = serializeObject(params)
-
-  const performRequest = function() {
-    retryCount = retryCount + 1
-    request.send(serializedParams)
-  }
-
-  request.timeout = timeout
-  // Y u no work?
-  // request.responseType = 'json'
-
-  request.open(method, url, true)
-  request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
-
-  if (STAGING_AUTH != null) {
-    request.setRequestHeader('Authorization', `Basic ${btoa(STAGING_AUTH)}`)
+const retriableFetch = (url, options={}, config={ retries: 5 }) => {
+  const retry = function(resolve, reject) {
+    config.retries = config.retries - 1
+    retriableFetch(url, options, config)
+      .then(resolve)
+      .catch(reject)
   }
 
   return new Promise((resolve, reject) => {
-    request.addEventListener('load', () => {
-      if (request.status === 200) {
-        try {
-          resolve(request)
-        } catch (error) {
-          reject({ state: 'error', error: `Couldn't parse response. ${error.message}, ${error.response}`})
-        }
-      } else {
-        reject({ state: 'error', error: `Response code ${request.status}`})
-      }
-    })
-
-    request.addEventListener('timeout', () => {
-      if (retryCount === max) {
-        return reject({ state: 'quit' })
+    fetch(url, options).then((response) => {
+      if (response.ok) {
+        return resolve(response)
+      } else if (config.retries === 1) {
+        throw error
       }
 
-      performRequest()
-    })
+      retry(resolve, reject)
+    }).catch((error) => {
+      if (config.retries === 1) {
+        throw error
+      }
 
-    request.addEventListener('error', (error) => {
-      reject({ state: 'error', error: error })
+      retry(resolve, reject)
     })
-
-    performRequest()
   })
 }
 
@@ -150,9 +148,32 @@ const serializeObject = function(obj) {
 }
 
 /**
- * Set up out Settings module
+ * Convert a base64 string in a Blob according to the data and contentType.
+ *
+ * @param b64Data {String} Pure base64 string without contentType
+ * @param contentType {String} the content type of the file i.e (image/jpeg - image/png - text/plain)
+ * @param sliceSize {Int} SliceSize to process the byteCharacters
+ * @see http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript
+ * @return Blob
  */
-const settings = new Settings()
+const b64toBlob = function(b64Data, contentType='', sliceSize=512) {
+  const byteCharacters = atob(b64Data)
+  const byteArrays = []
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize)
+
+    const byteNumbers = new Array(slice.length)
+    for (var i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i)
+    }
+
+    const byteArray = new Uint8Array(byteNumbers)
+    byteArrays.push(byteArray)
+  }
+
+  return new Blob(byteArrays, { type: contentType })
+}
 
 module.exports = {
   serialize,
@@ -163,7 +184,8 @@ module.exports = {
   randomString,
   pickRandom,
   imageBase64FromNode,
-  pollRequest,
+  retriableFetch,
   serializeObject,
-  settings
+  storage,
+  b64toBlob,
 }
