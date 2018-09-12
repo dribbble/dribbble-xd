@@ -20844,9 +20844,11 @@ module.exports = class Dropdown extends React.Component {
   }
 
   logout() {
-    _.storage.set('authToken', null);
-    _.storage.set('userDetails', null);
-    this.props.dialog.close();
+    _.storage.destroy('authToken').then(() => {
+      _.storage.destroy('userDetails').then(() => {
+        this.props.dialog.close();
+      });
+    });
   }
 
   render() {
@@ -21828,7 +21830,7 @@ module.exports = class ShareModal extends React.Component {
     return React.createElement(
       'div',
       { id: 'share-sheet', ref: 'container' },
-      React.createElement(Header, { type: this.state.headerType }),
+      React.createElement(Header, { type: this.state.headerType, dialog: this.props.dialog }),
       view
     );
   }
@@ -21979,6 +21981,21 @@ class storageHelper {
         const data = await dataFile.read({ format: storage.formats.utf8 });
         let object = JSON.parse(data.toString());
         object[key] = value;
+        return await dataFile.write(JSON.stringify(object), { append: false, format: storage.formats.utf8 });
+    }
+
+    /**
+     * Destroys a certain key-value-pair to the storage.
+     * @param {string} key The identifier
+     * @return {Promise<void>}
+     */
+    static async destroy(key) {
+        const dataFile = await this.init();
+        const data = await dataFile.read({ format: storage.formats.utf8 });
+        let object = JSON.parse(data.toString());
+        if (object[key]) {
+            delete object[key];
+        }
         return await dataFile.write(JSON.stringify(object), { append: false, format: storage.formats.utf8 });
     }
 }

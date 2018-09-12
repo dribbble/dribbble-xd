@@ -200,7 +200,7 @@ module.exports = class ShareModal extends React.Component {
 
     return (
       <div id="share-sheet" ref="container">
-        <Header type={this.state.headerType} />
+        <Header type={this.state.headerType} dialog={this.props.dialog} />
         {view}
       </div>
     )

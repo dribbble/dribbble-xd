@@ -15,9 +15,11 @@ module.exports = class Dropdown extends React.Component {
   }
 
   logout() {
-    _.storage.set('authToken', null)
-    _.storage.set('userDetails', null)
-    this.props.dialog.close()
+    _.storage.destroy('authToken').then(() => {
+      _.storage.destroy('userDetails').then(() => {
+        this.props.dialog.close()
+      })
+    })
   }
 
   render() {
