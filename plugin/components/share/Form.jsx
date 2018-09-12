@@ -37,7 +37,7 @@ module.exports = class Form extends React.Component {
             <span>
               Tags
             </span>
-            <TokenField name="tags" placeholder="adobexd" />
+            <TokenField name="tags" placeholder="adobexd, awesome design" />
           </label>
 
           <label className="text-field-container">

@@ -162,241 +162,6 @@ module.exports =
 
 /***/ }),
 
-/***/ "./node_modules/blob-polyfill/Blob.js":
-/*!********************************************!*\
-  !*** ./node_modules/blob-polyfill/Blob.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* Blob.js
- * A Blob implementation.
- * 2018-01-12
- *
- * By Eli Grey, http://eligrey.com
- * By Devin Samarin, https://github.com/dsamarin
- * License: MIT
- *   See https://github.com/eligrey/Blob.js/blob/master/LICENSE.md
- */
-
-/*global self, unescape */
-/*jslint bitwise: true, regexp: true, confusion: true, es5: true, vars: true, white: true,
-  plusplus: true */
-
-/*! @source http://purl.eligrey.com/github/Blob.js/blob/master/Blob.js */
-
-(function(global) {
-	(function (factory) {
-		if (true) {
-			// AMD. Register as an anonymous module.
-			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {}
-	})(function (exports) {
-		"use strict";
-
-		exports.URL = global.URL || global.webkitURL;
-
-		if (global.Blob && global.URL) {
-			try {
-				new Blob;
-				return;
-			} catch (e) {
-				// Blob did not instantiate, time to polyfill
-			}
-		}
-
-		// Internally we use a BlobBuilder implementation to base Blob off of
-		// in order to support older browsers that only have BlobBuilder
-		var BlobBuilder = global.BlobBuilder || global.WebKitBlobBuilder || global.MozBlobBuilder || (function() {
-			var get_class = function(object) {
-					return Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
-				}
-				, FakeBlobBuilder = function BlobBuilder() {
-					this.data = [];
-				}
-				, FakeBlob = function Blob(data, type, encoding) {
-					this.data = data;
-					this.size = data.length;
-					this.type = type;
-					this.encoding = encoding;
-				}
-				, FBB_proto = FakeBlobBuilder.prototype
-				, FB_proto = FakeBlob.prototype
-				, FileReaderSync = global.FileReaderSync
-				, FileException = function(type) {
-					this.code = this[this.name = type];
-				}
-				, file_ex_codes = (
-					"NOT_FOUND_ERR SECURITY_ERR ABORT_ERR NOT_READABLE_ERR ENCODING_ERR "
-					+ "NO_MODIFICATION_ALLOWED_ERR INVALID_STATE_ERR SYNTAX_ERR"
-				).split(" ")
-				, file_ex_code = file_ex_codes.length
-				, real_URL = global.URL || global.webkitURL || exports
-				, real_create_object_URL = real_URL.createObjectURL
-				, real_revoke_object_URL = real_URL.revokeObjectURL
-				, URL = real_URL
-				, btoa = global.btoa
-				, atob = global.atob
-
-				, ArrayBuffer = global.ArrayBuffer
-				, Uint8Array = global.Uint8Array
-
-				, origin = /^[\w-]+:\/*\[?[\w.:-]+\]?(?::[0-9]+)?/
-			;
-			FakeBlob.fake = FB_proto.fake = true;
-			while (file_ex_code--) {
-				FileException.prototype[file_ex_codes[file_ex_code]] = file_ex_code + 1;
-			}
-			// Polyfill URL
-			if (!real_URL.createObjectURL) {
-				URL = exports.URL = function(uri) {
-					var uri_info = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-						, uri_origin
-					;
-					uri_info.href = uri;
-					if (!("origin" in uri_info)) {
-						if (uri_info.protocol.toLowerCase() === "data:") {
-							uri_info.origin = null;
-						} else {
-							uri_origin = uri.match(origin);
-							uri_info.origin = uri_origin && uri_origin[1];
-						}
-					}
-					return uri_info;
-				};
-			}
-			URL.createObjectURL = function(blob) {
-				var
-					type = blob.type
-					, data_URI_header
-				;
-				if (type === null) {
-					type = "application/octet-stream";
-				}
-				if (blob instanceof FakeBlob) {
-					data_URI_header = "data:" + type;
-					if (blob.encoding === "base64") {
-						return data_URI_header + ";base64," + blob.data;
-					} else if (blob.encoding === "URI") {
-						return data_URI_header + "," + decodeURIComponent(blob.data);
-					} if (btoa) {
-						return data_URI_header + ";base64," + btoa(blob.data);
-					} else {
-						return data_URI_header + "," + encodeURIComponent(blob.data);
-					}
-				} else if (real_create_object_URL) {
-					return real_create_object_URL.call(real_URL, blob);
-				}
-			};
-			URL.revokeObjectURL = function(object_URL) {
-				if (object_URL.substring(0, 5) !== "data:" && real_revoke_object_URL) {
-					real_revoke_object_URL.call(real_URL, object_URL);
-				}
-			};
-			FBB_proto.append = function(data/*, endings*/) {
-				var bb = this.data;
-				// decode data to a binary string
-				if (Uint8Array && (data instanceof ArrayBuffer || data instanceof Uint8Array)) {
-					var str = ""
-						, buf = new Uint8Array(data)
-						, i = 0
-						, buf_len = buf.length
-					;
-					for (; i < buf_len; i++) {
-						str += String.fromCharCode(buf[i]);
-					}
-					bb.push(str);
-				} else if (get_class(data) === "Blob" || get_class(data) === "File") {
-					if (FileReaderSync) {
-						var fr = new FileReaderSync;
-						bb.push(fr.readAsBinaryString(data));
-					} else {
-						// async FileReader won't work as BlobBuilder is sync
-						throw new FileException("NOT_READABLE_ERR");
-					}
-				} else if (data instanceof FakeBlob) {
-					if (data.encoding === "base64" && atob) {
-						bb.push(atob(data.data));
-					} else if (data.encoding === "URI") {
-						bb.push(decodeURIComponent(data.data));
-					} else if (data.encoding === "raw") {
-						bb.push(data.data);
-					}
-				} else {
-					if (typeof data !== "string") {
-						data += ""; // convert unsupported types to strings
-					}
-					// decode UTF-16 to binary string
-					bb.push(unescape(encodeURIComponent(data)));
-				}
-			};
-			FBB_proto.getBlob = function(type) {
-				if (!arguments.length) {
-					type = null;
-				}
-				return new FakeBlob(this.data.join(""), type, "raw");
-			};
-			FBB_proto.toString = function() {
-				return "[object BlobBuilder]";
-			};
-			FB_proto.slice = function(start, end, type) {
-				var args = arguments.length;
-				if (args < 3) {
-					type = null;
-				}
-				return new FakeBlob(this.data.slice(start, args > 1 ? end : this.data.length)
-					, type
-					, this.encoding
-				);
-			};
-			FB_proto.toString = function() {
-				return "[object Blob]";
-			};
-			FB_proto.close = function() {
-				this.size = 0;
-				delete this.data;
-			};
-			return FakeBlobBuilder;
-		}());
-
-		exports.Blob = function(blobParts, options) {
-			var type = options ? (options.type || "") : "";
-			var builder = new BlobBuilder();
-			if (blobParts) {
-				for (var i = 0, len = blobParts.length; i < len; i++) {
-					if (Uint8Array && blobParts[i] instanceof Uint8Array) {
-						builder.append(blobParts[i].buffer);
-					}
-					else {
-						builder.append(blobParts[i]);
-					}
-				}
-			}
-			var blob = builder.getBlob(type);
-			if (!blob.slice && blob.webkitSlice) {
-				blob.slice = blob.webkitSlice;
-			}
-			return blob;
-		};
-
-		var getPrototypeOf = Object.getPrototypeOf || function(object) {
-			return object.__proto__;
-		};
-		exports.Blob.prototype = getPrototypeOf(new exports.Blob());
-	});
-})(
-	typeof self !== "undefined" && self ||
-	typeof window !== "undefined" && window ||
-	typeof global !== "undefined" && global ||
-	this
-);
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/index.js!./node_modules/sass-loader/lib/loader.js!./plugin/style.scss":
 /*!**********************************************************************************************!*\
   !*** ./node_modules/css-loader!./node_modules/sass-loader/lib/loader.js!./plugin/style.scss ***!
@@ -409,7 +174,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\ninput[type=hidden] {\n  display: none; }\n\n.loading-button {\n  font-size: 13px;\n  padding: 3px 15px 3px;\n  letter-spacing: .02em;\n  border: none;\n  border-radius: 20px;\n  background: #fff;\n  margin: 0 5px;\n  color: #777;\n  display: flex;\n  align-items: middle; }\n  .loading-button img {\n    width: 26px;\n    height: 26px;\n    margin: -3px 0 -10px -7px; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  box-sizing: border-box;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 10;\n  width: 308px;\n  height: 230px;\n  cursor: pointer; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px;\n  cursor: pointer; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px; }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  color: #525252;\n  margin: 0; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right;\n  position: relative; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 15px 10px;\n    height: 34px;\n    position: absolute;\n    top: -6px;\n    right: 0;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    cursor: pointer; }\n    #header-dropdown-container .trigger.active {\n      background: #333; }\n    #header-dropdown-container .trigger:not(.active):hover {\n      background: #eee;\n      border-bottom-left-radius: 5px;\n      border-bottom-right-radius: 5px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px;\n    vertical-align: top;\n    margin-bottom: 20px; }\n\n#dropdown-navigation {\n  background: #333;\n  display: block;\n  position: absolute;\n  top: 25px;\n  right: 0;\n  z-index: -10;\n  font-size: 14px;\n  line-height: 1.2;\n  text-align: left;\n  border-radius: 5px;\n  border-top-right-radius: 0; }\n  #dropdown-navigation ul {\n    list-style-type: none;\n    padding: 10px 0;\n    margin: 0; }\n  #dropdown-navigation li.divider {\n    border-top: 1px solid rgba(255, 255, 255, 0.15);\n    padding-top: 8px;\n    margin-top: 8px; }\n  #dropdown-navigation a,\n  #dropdown-navigation p {\n    margin: 0;\n    color: #999;\n    padding: 5px 15px;\n    text-decoration: none;\n    display: block;\n    width: 170px; }\n    #dropdown-navigation a:hover,\n    #dropdown-navigation p:hover {\n      color: #ddd;\n      background-color: rgba(255, 255, 255, 0.1); }\n    #dropdown-navigation a:active,\n    #dropdown-navigation p:active {\n      color: #ddd;\n      background-color: rgba(0, 0, 0, 0.3); }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  height: 320px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet footer {\n  margin-top: 30px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n\n#share-sheet .loading-button {\n  margin-top: 13px;\n  height: 23px; }\n\n#account-selector-container {\n  position: relative;\n  left: -10px;\n  top: -1px; }\n  #account-selector-container .thumb-container {\n    border-radius: 50%;\n    overflow: hidden; }\n  #account-selector-container .current-account-toggle {\n    display: flex;\n    align-items: center;\n    padding: 9px 10px;\n    margin-top: -6px;\n    border-radius: 4px;\n    text-decoration: none;\n    color: #666; }\n    #account-selector-container .current-account-toggle.toggleable {\n      cursor: pointer; }\n      #account-selector-container .current-account-toggle.toggleable:hover {\n        background-color: #eee; }\n    #account-selector-container .current-account-toggle.active {\n      background-color: #333;\n      color: #999;\n      border-top-left-radius: 0;\n      border-top-right-radius: 0; }\n      #account-selector-container .current-account-toggle.active:hover {\n        background-color: #333; }\n    #account-selector-container .current-account-toggle img {\n      width: 30px;\n      height: 30px;\n      vertical-align: bottom; }\n    #account-selector-container .current-account-toggle .name {\n      display: block;\n      color: inherit;\n      margin-left: 7px;\n      font-weight: 500; }\n    #account-selector-container .current-account-toggle .label {\n      white-space: nowrap;\n      display: block;\n      font-size: 11px;\n      opacity: 0.7; }\n    #account-selector-container .current-account-toggle .userName {\n      white-space: nowrap;\n      display: block;\n      font-size: 14px; }\n  #account-selector-container .account-selections {\n    position: absolute;\n    bottom: 50px;\n    background-color: #333;\n    color: #999;\n    border-top-left-radius: 4px;\n    border-top-right-radius: 4px;\n    overflow: hidden;\n    min-width: 100%;\n    padding: 6px 0;\n    white-space: nowrap;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.1); }\n    #account-selector-container .account-selections p {\n      white-space: nowrap;\n      color: #999;\n      padding: 5px 15px;\n      text-decoration: none;\n      display: flex;\n      font-size: 14px; }\n      #account-selector-container .account-selections p:hover {\n        color: #ddd;\n        background-color: rgba(255, 255, 255, 0.1); }\n      #account-selector-container .account-selections p:active {\n        color: #ddd;\n        background-color: rgba(0, 0, 0, 0.3); }\n      #account-selector-container .account-selections p span {\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis; }\n      #account-selector-container .account-selections p img {\n        width: 18px;\n        height: 18px;\n        vertical-align: middle;\n        border-radius: 20px;\n        overflow: hidden;\n        margin-right: 4px;\n        flex: 0 0 18px; }\n\n#shot-form {\n  display: flex;\n  flex-direction: row; }\n  #shot-form .left-column {\n    flex: 0 0 240px; }\n  #shot-form .right-column {\n    flex: 1 0 0;\n    padding-left: 25px;\n    margin-top: -5px; }\n\n.checkbox-container {\n  cursor: pointer;\n  display: flex;\n  flex-direction: row; }\n  .checkbox-container input[type=\"checkbox\"] {\n    cursor: pointer; }\n  .checkbox-container span {\n    font-size: 13px;\n    color: #444;\n    vertical-align: middle;\n    margin-top: 4px;\n    margin-left: 2px; }\n\n.text-field-container {\n  display: block; }\n  .text-field-container span {\n    display: block;\n    font-size: 13px;\n    color: #999;\n    margin-bottom: 5px;\n    cursor: pointer; }\n  .text-field-container textarea {\n    height: 90px; }\n\n#shot-preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 9px;\n  box-sizing: border-box; }\n  #shot-preview img {\n    width: 220px;\n    vertical-align: bottom; }\n\n#share-message p {\n  font-size: 17px;\n  line-height: 23px;\n  color: #444; }\n  #share-message p a {\n    color: #ea4c89; }\n", ""]);
+exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\ninput[type=hidden] {\n  display: none; }\n\n.loading-button {\n  font-size: 13px;\n  padding: 3px 15px 3px;\n  letter-spacing: .02em;\n  border: none;\n  border-radius: 20px;\n  background: #fff;\n  margin: 0 5px;\n  color: #777;\n  display: flex;\n  align-items: middle; }\n  .loading-button img {\n    width: 26px;\n    height: 26px;\n    margin: -3px 0 -10px -7px; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  box-sizing: border-box;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 10;\n  width: 308px;\n  height: 230px;\n  cursor: pointer; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px;\n  cursor: pointer; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px; }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  color: #525252;\n  margin: 0; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right;\n  position: relative; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 15px 10px;\n    height: 34px;\n    position: absolute;\n    top: -6px;\n    right: 0;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    cursor: pointer; }\n    #header-dropdown-container .trigger.active {\n      background: #333; }\n    #header-dropdown-container .trigger:not(.active):hover {\n      background: #eee;\n      border-bottom-left-radius: 5px;\n      border-bottom-right-radius: 5px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px;\n    vertical-align: top;\n    margin-bottom: 20px; }\n\n#dropdown-navigation {\n  background: #333;\n  display: block;\n  position: absolute;\n  top: 25px;\n  right: 0;\n  z-index: -10;\n  font-size: 14px;\n  line-height: 1.2;\n  text-align: left;\n  border-radius: 5px;\n  border-top-right-radius: 0; }\n  #dropdown-navigation ul {\n    list-style-type: none;\n    padding: 10px 0;\n    margin: 0; }\n  #dropdown-navigation li.divider {\n    border-top: 1px solid rgba(255, 255, 255, 0.15);\n    padding-top: 8px;\n    margin-top: 8px; }\n  #dropdown-navigation a,\n  #dropdown-navigation p {\n    margin: 0;\n    color: #999;\n    padding: 5px 15px;\n    text-decoration: none;\n    display: block;\n    width: 170px; }\n    #dropdown-navigation a:hover,\n    #dropdown-navigation p:hover {\n      color: #ddd;\n      background-color: rgba(255, 255, 255, 0.1); }\n    #dropdown-navigation a:active,\n    #dropdown-navigation p:active {\n      color: #ddd;\n      background-color: rgba(0, 0, 0, 0.3); }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  height: 320px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet footer {\n  margin-top: 30px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n\n#share-sheet .loading-button {\n  margin-top: 13px;\n  height: 23px; }\n\n#account-selector-container {\n  position: relative;\n  left: -10px;\n  top: -1px; }\n  #account-selector-container .thumb-container {\n    border-radius: 50%;\n    overflow: hidden; }\n  #account-selector-container .current-account-toggle {\n    display: flex;\n    align-items: center;\n    padding: 9px 10px;\n    margin-top: -6px;\n    border-radius: 4px;\n    text-decoration: none;\n    color: #666; }\n    #account-selector-container .current-account-toggle.toggleable {\n      cursor: pointer; }\n      #account-selector-container .current-account-toggle.toggleable:hover {\n        background-color: #eee; }\n    #account-selector-container .current-account-toggle.active {\n      background-color: #333;\n      color: #999;\n      border-top-left-radius: 0;\n      border-top-right-radius: 0; }\n      #account-selector-container .current-account-toggle.active:hover {\n        background-color: #333; }\n    #account-selector-container .current-account-toggle img {\n      width: 30px;\n      height: 30px;\n      vertical-align: bottom; }\n    #account-selector-container .current-account-toggle .name {\n      display: block;\n      color: inherit;\n      margin-left: 7px;\n      font-weight: 500; }\n    #account-selector-container .current-account-toggle .label {\n      white-space: nowrap;\n      display: block;\n      font-size: 11px;\n      opacity: 0.7; }\n    #account-selector-container .current-account-toggle .userName {\n      white-space: nowrap;\n      display: block;\n      font-size: 14px; }\n  #account-selector-container .account-selections {\n    position: absolute;\n    bottom: 50px;\n    background-color: #333;\n    color: #999;\n    border-top-left-radius: 4px;\n    border-top-right-radius: 4px;\n    overflow: hidden;\n    min-width: 100%;\n    padding: 6px 0;\n    white-space: nowrap;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.1); }\n    #account-selector-container .account-selections p {\n      white-space: nowrap;\n      color: #999;\n      padding: 5px 15px;\n      text-decoration: none;\n      display: flex;\n      font-size: 14px; }\n      #account-selector-container .account-selections p:hover {\n        color: #ddd;\n        background-color: rgba(255, 255, 255, 0.1); }\n      #account-selector-container .account-selections p:active {\n        color: #ddd;\n        background-color: rgba(0, 0, 0, 0.3); }\n      #account-selector-container .account-selections p span {\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis; }\n      #account-selector-container .account-selections p img {\n        width: 18px;\n        height: 18px;\n        vertical-align: middle;\n        border-radius: 20px;\n        overflow: hidden;\n        margin-right: 4px;\n        flex: 0 0 18px; }\n\n#shot-form {\n  display: flex;\n  flex-direction: row; }\n  #shot-form .left-column {\n    flex: 0 0 240px; }\n  #shot-form .right-column {\n    flex: 1 0 0;\n    padding-left: 25px;\n    margin-top: -5px; }\n\n.checkbox-container {\n  cursor: pointer;\n  display: flex;\n  flex-direction: row; }\n  .checkbox-container input[type=\"checkbox\"] {\n    cursor: pointer; }\n  .checkbox-container span {\n    font-size: 13px;\n    color: #444;\n    vertical-align: middle;\n    margin-top: 4px;\n    margin-left: 2px; }\n\n.text-field-container {\n  display: block; }\n  .text-field-container span {\n    display: block;\n    font-size: 13px;\n    color: #999;\n    margin-bottom: 5px;\n    cursor: pointer; }\n  .text-field-container textarea {\n    height: 90px; }\n\n#shot-preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 9px;\n  box-sizing: border-box; }\n  #shot-preview img {\n    width: 220px;\n    vertical-align: bottom; }\n\n#share-message p {\n  font-size: 17px;\n  line-height: 5px;\n  color: #444; }\n  #share-message p a {\n    color: #ea4c89; }\n", ""]);
 
 // exports
 
@@ -21771,7 +21536,7 @@ module.exports = class Form extends React.Component {
             null,
             'Tags'
           ),
-          React.createElement(TokenField, { name: 'tags', placeholder: 'adobexd' })
+          React.createElement(TokenField, { name: 'tags', placeholder: 'adobexd, awesome design' })
         ),
         React.createElement(
           'label',
@@ -21834,6 +21599,7 @@ const Header = __webpack_require__(/*! ../header/Header.jsx */ "./plugin/compone
 const Preview = __webpack_require__(/*! ./Preview.jsx */ "./plugin/components/share/Preview.jsx");
 const Form = __webpack_require__(/*! ./Form.jsx */ "./plugin/components/share/Form.jsx");
 const AccountSelector = __webpack_require__(/*! ./AccountSelector.jsx */ "./plugin/components/share/AccountSelector.jsx");
+const uxp = __webpack_require__(/*! uxp */ "uxp");
 
 module.exports = class ShareModal extends React.Component {
   constructor(props) {
@@ -21851,6 +21617,16 @@ module.exports = class ShareModal extends React.Component {
 
   dismissDialog() {
     this.props.dialog.close();
+  }
+
+  openContact() {
+    const authUrl = `${_.config.siteUrl}/contact`;
+    uxp.shell.openExternal(authUrl);
+  }
+
+  openShot() {
+    const authUrl = this.state.shotUrl;
+    uxp.shell.openExternal(authUrl);
   }
 
   componentDidMount() {
@@ -21896,7 +21672,7 @@ module.exports = class ShareModal extends React.Component {
 
     const formData = new FormData(this.refs.shotForm.refs.shotForm);
     const imageBlob = _.b64toBlob(this.state.imageData, 'image/png');
-    formData.append('image', imageBlob);
+    formData.append('image', imageBlob, 'image.png');
 
     const requestHeaders = new Headers();
     requestHeaders.append('Authorization', `Bearer ${this.props.auth}`);
@@ -21904,7 +21680,7 @@ module.exports = class ShareModal extends React.Component {
     fetch(`${_.config.apiUrl}/shots`, {
       method: 'POST',
       headers: requestHeaders,
-      body: formData
+      body: formData._blob()
     }).then(response => {
       if (response.status === 202) {
         const splitUrl = response.headers.get('location').split('/');
@@ -21961,18 +21737,22 @@ module.exports = class ShareModal extends React.Component {
           React.createElement(
             'p',
             null,
-            'Your shot has been posted. You can ',
-            React.createElement(
-              'a',
-              { href: this.state.shotUrl },
-              'see it here'
-            ),
-            '.'
+            'Your shot has been posted.'
           ),
           React.createElement(
-            'button',
-            { onClick: this.dismissDialog.bind(this), 'uxp-variant': 'cta' },
-            'Okay'
+            'footer',
+            { id: 'close-footer' },
+            React.createElement('div', { className: 'spacer' }),
+            React.createElement(
+              'button',
+              { onClick: this.openShot.bind(this) },
+              'Open Shot'
+            ),
+            React.createElement(
+              'button',
+              { 'uxp-variant': 'cta', onClick: this.dismissDialog.bind(this) },
+              'Okay'
+            )
           )
         );
         break;
@@ -21983,18 +21763,22 @@ module.exports = class ShareModal extends React.Component {
           React.createElement(
             'p',
             null,
-            'Something went wrong on our end. You might want to try again. If this issue continues please ',
-            React.createElement(
-              'a',
-              { href: `${_.config.siteUrl}/contact` },
-              'contact us'
-            ),
-            '.'
+            'Something went wrong on our end. You might want to try again. If this issue continues please contact us.'
           ),
           React.createElement(
-            'button',
-            { onClick: this.dismissDialog.bind(this), 'uxp-variant': 'cta' },
-            'Okay'
+            'footer',
+            { id: 'close-footer' },
+            React.createElement('div', { className: 'spacer' }),
+            React.createElement(
+              'button',
+              { onClick: this.openContact.bind(this) },
+              'Contact Support'
+            ),
+            React.createElement(
+              'button',
+              { 'uxp-variant': 'cta', onClick: this.dismissDialog.bind(this) },
+              'Okay'
+            )
           )
         );
         break;
@@ -22063,8 +21847,8 @@ module.exports = {
   platformIdentifier: 'xd',
 
   apiKey: "62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5",
-  siteUrl: `https://${"staging.dribbble.com"}`,
-  apiUrl: `https://api-${"staging.dribbble.com"}/v2`,
+  siteUrl: "https://staging.dribbble.com",
+  apiUrl: "https://api-staging.dribbble.com/v2",
   helpUrl: `https://help.dribbble.com/`,
 
   dimensionReqs: {
@@ -22229,9 +22013,7 @@ const { btoa, atob } = __webpack_require__(/*! Base64 */ "./node_modules/Base64/
 window.btoa = btoa;
 window.atob = atob;
 
-const { Blob } = __webpack_require__(/*! blob-polyfill */ "./node_modules/blob-polyfill/Blob.js");
-window.Blob = Blob;
-
+__webpack_require__(/*! ../vendor/blob */ "./plugin/vendor/blob.js");
 __webpack_require__(/*! formdata-polyfill */ "./node_modules/formdata-polyfill/formdata.min.js");
 
 // === End environment setup
@@ -22497,6 +22279,417 @@ var update = __webpack_require__(/*! ../node_modules/style-loader/lib/addStyles.
 if(content.locals) module.exports = content.locals;
 
 if(false) {}
+
+/***/ }),
+
+/***/ "./plugin/vendor/blob.js":
+/*!*******************************!*\
+  !*** ./plugin/vendor/blob.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/* Blob.js
+ * A Blob, File, FileReader & URL implementation.
+ * 2018-08-09
+ *
+ * By Eli Grey, http://eligrey.com
+ * By Jimmy Wärting, https://github.com/jimmywarting
+ * License: MIT
+ *   See https://github.com/eligrey/Blob.js/blob/master/LICENSE.md
+ */
+
+;(function () {
+
+  var global = typeof window === 'object' ? window : typeof self === 'object' ? self : this;
+
+  var BlobBuilder = global.BlobBuilder || global.WebKitBlobBuilder || global.MSBlobBuilder || global.MozBlobBuilder;
+
+  global.URL = global.URL || global.webkitURL || function (href, a) {
+    a = document.createElement('a');
+    a.href = href;
+    return a;
+  };
+
+  var origBlob = global.Blob;
+  var createObjectURL = URL.createObjectURL;
+  var revokeObjectURL = URL.revokeObjectURL;
+  var strTag = global.Symbol && global.Symbol.toStringTag;
+  var blobSupported = false;
+  var blobSupportsArrayBufferView = false;
+  var arrayBufferSupported = !!global.ArrayBuffer;
+  var blobBuilderSupported = BlobBuilder && BlobBuilder.prototype.append && BlobBuilder.prototype.getBlob;
+
+  try {
+    // Check if Blob constructor is supported
+    blobSupported = new Blob(['ä']).size === 2;
+
+    // Check if Blob constructor supports ArrayBufferViews
+    // Fails in Safari 6, so we need to map to ArrayBuffers there.
+    blobSupportsArrayBufferView = new Blob([new Uint8Array([1, 2])]).size === 2;
+  } catch (e) {}
+
+  /**
+   * Helper function that maps ArrayBufferViews to ArrayBuffers
+   * Used by BlobBuilder constructor and old browsers that didn't
+   * support it in the Blob constructor.
+   */
+  function mapArrayBufferViews(ary) {
+    return ary.map(function (chunk) {
+      if (chunk.buffer instanceof ArrayBuffer) {
+        var buf = chunk.buffer;
+
+        // if this is a subarray, make a copy so we only
+        // include the subarray region from the underlying buffer
+        if (chunk.byteLength !== buf.byteLength) {
+          var copy = new Uint8Array(chunk.byteLength);
+          copy.set(new Uint8Array(buf, chunk.byteOffset, chunk.byteLength));
+          buf = copy.buffer;
+        }
+
+        return buf;
+      }
+
+      return chunk;
+    });
+  }
+
+  function BlobBuilderConstructor(ary, options) {
+    options = options || {};
+
+    var bb = new BlobBuilder();
+    mapArrayBufferViews(ary).forEach(function (part) {
+      bb.append(part);
+    });
+
+    return options.type ? bb.getBlob(options.type) : bb.getBlob();
+  };
+
+  function BlobConstructor(ary, options) {
+    return new origBlob(mapArrayBufferViews(ary), options || {});
+  };
+
+  if (global.Blob) {
+    BlobBuilderConstructor.prototype = Blob.prototype;
+    BlobConstructor.prototype = Blob.prototype;
+  }
+
+  function FakeBlobBuilder() {
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i = 0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);else if (charcode < 0x800) {
+          utf8.push(0xc0 | charcode >> 6, 0x80 | charcode & 0x3f);
+        } else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | charcode >> 12, 0x80 | charcode >> 6 & 0x3f, 0x80 | charcode & 0x3f);
+        }
+        // surrogate pair
+        else {
+            i++;
+            // UTF-16 encodes 0x10000-0x10FFFF by
+            // subtracting 0x10000 and splitting the
+            // 20 bits of 0x0-0xFFFFF into two halves
+            charcode = 0x10000 + ((charcode & 0x3ff) << 10 | str.charCodeAt(i) & 0x3ff);
+            utf8.push(0xf0 | charcode >> 18, 0x80 | charcode >> 12 & 0x3f, 0x80 | charcode >> 6 & 0x3f, 0x80 | charcode & 0x3f);
+          }
+      }
+      return utf8;
+    }
+    function fromUtf8Array(array) {
+      var out, i, len, c;
+      var char2, char3;
+
+      out = "";
+      len = array.length;
+      i = 0;
+      while (i < len) {
+        c = array[i++];
+        switch (c >> 4) {
+          case 0:case 1:case 2:case 3:case 4:case 5:case 6:case 7:
+            // 0xxxxxxx
+            out += String.fromCharCode(c);
+            break;
+          case 12:case 13:
+            // 110x xxxx   10xx xxxx
+            char2 = array[i++];
+            out += String.fromCharCode((c & 0x1F) << 6 | char2 & 0x3F);
+            break;
+          case 14:
+            // 1110 xxxx  10xx xxxx  10xx xxxx
+            char2 = array[i++];
+            char3 = array[i++];
+            out += String.fromCharCode((c & 0x0F) << 12 | (char2 & 0x3F) << 6 | (char3 & 0x3F) << 0);
+            break;
+        }
+      }
+      return out;
+    }
+    function isDataView(obj) {
+      return obj && DataView.prototype.isPrototypeOf(obj);
+    }
+    function bufferClone(buf) {
+      var view = new Array(buf.byteLength);
+      var array = new Uint8Array(buf);
+      var i = view.length;
+      while (i--) {
+        view[i] = array[i];
+      }
+      return view;
+    }
+    function encodeByteArray(input) {
+      var byteToCharMap = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+      var output = [];
+
+      for (var i = 0; i < input.length; i += 3) {
+        var byte1 = input[i];
+        var haveByte2 = i + 1 < input.length;
+        var byte2 = haveByte2 ? input[i + 1] : 0;
+        var haveByte3 = i + 2 < input.length;
+        var byte3 = haveByte3 ? input[i + 2] : 0;
+
+        var outByte1 = byte1 >> 2;
+        var outByte2 = (byte1 & 0x03) << 4 | byte2 >> 4;
+        var outByte3 = (byte2 & 0x0F) << 2 | byte3 >> 6;
+        var outByte4 = byte3 & 0x3F;
+
+        if (!haveByte3) {
+          outByte4 = 64;
+
+          if (!haveByte2) {
+            outByte3 = 64;
+          }
+        }
+
+        output.push(byteToCharMap[outByte1], byteToCharMap[outByte2], byteToCharMap[outByte3], byteToCharMap[outByte4]);
+      }
+
+      return output.join('');
+    }
+
+    var create = Object.create || function (a) {
+      function c() {}
+      c.prototype = a;
+      return new c();
+    };
+
+    if (arrayBufferSupported) {
+      var viewClasses = ['[object Int8Array]', '[object Uint8Array]', '[object Uint8ClampedArray]', '[object Int16Array]', '[object Uint16Array]', '[object Int32Array]', '[object Uint32Array]', '[object Float32Array]', '[object Float64Array]'];
+
+      var isArrayBufferView = ArrayBuffer.isView || function (obj) {
+        return obj && viewClasses.indexOf(Object.prototype.toString.call(obj)) > -1;
+      };
+    }
+
+    /********************************************************/
+    /*                   Blob constructor                   */
+    /********************************************************/
+    function Blob(chunks, opts) {
+      chunks = chunks || [];
+      for (var i = 0, len = chunks.length; i < len; i++) {
+        var chunk = chunks[i];
+        if (chunk instanceof Blob) {
+          chunks[i] = chunk._buffer;
+        } else if (typeof chunk === 'string') {
+          chunks[i] = toUTF8Array(chunk);
+        } else if (arrayBufferSupported && (ArrayBuffer.prototype.isPrototypeOf(chunk) || isArrayBufferView(chunk))) {
+          chunks[i] = bufferClone(chunk);
+        } else if (arrayBufferSupported && isDataView(chunk)) {
+          chunks[i] = bufferClone(chunk.buffer);
+        } else {
+          chunks[i] = toUTF8Array(String(chunk));
+        }
+      }
+
+      this._buffer = [].concat.apply([], chunks);
+      this.size = this._buffer.length;
+      this.type = opts ? opts.type || '' : '';
+    }
+
+    Blob.prototype.slice = function (start, end, type) {
+      var slice = this._buffer.slice(start || 0, end || this._buffer.length);
+      return new Blob([slice], { type: type });
+    };
+
+    Blob.prototype.toString = function () {
+      return '[object Blob]';
+    };
+
+    /********************************************************/
+    /*                   File constructor                   */
+    /********************************************************/
+    function File(chunks, name, opts) {
+      opts = opts || {};
+      var a = Blob.call(this, chunks, opts) || this;
+      a.name = name;
+      a.lastModifiedDate = opts.lastModified ? new Date(opts.lastModified) : new Date();
+      a.lastModified = +a.lastModifiedDate;
+
+      return a;
+    }
+
+    File.prototype = create(Blob.prototype);
+    File.prototype.constructor = File;
+
+    if (Object.setPrototypeOf) Object.setPrototypeOf(File, Blob);else {
+      try {
+        File.__proto__ = Blob;
+      } catch (e) {}
+    }
+
+    File.prototype.toString = function () {
+      return '[object File]';
+    };
+
+    /********************************************************/
+    /*                FileReader constructor                */
+    /********************************************************/
+    function FileReader() {
+      if (!(this instanceof FileReader)) throw new TypeError("Failed to construct 'FileReader': Please use the 'new' operator, this DOM object constructor cannot be called as a function.");
+
+      var delegate = document.createDocumentFragment();
+      this.addEventListener = delegate.addEventListener;
+      this.dispatchEvent = function (evt) {
+        var local = this['on' + evt.type];
+        if (typeof local === 'function') local(evt);
+        delegate.dispatchEvent(evt);
+      };
+      this.removeEventListener = delegate.removeEventListener;
+    }
+
+    function _read(fr, blob, kind) {
+      if (!(blob instanceof Blob)) throw new TypeError("Failed to execute '" + kind + "' on 'FileReader': parameter 1 is not of type 'Blob'.");
+
+      fr.result = '';
+
+      setTimeout(function () {
+        this.readyState = FileReader.LOADING;
+        fr.dispatchEvent(new Event('load'));
+        fr.dispatchEvent(new Event('loadend'));
+      });
+    }
+
+    FileReader.EMPTY = 0;
+    FileReader.LOADING = 1;
+    FileReader.DONE = 2;
+    FileReader.prototype.error = null;
+    FileReader.prototype.onabort = null;
+    FileReader.prototype.onerror = null;
+    FileReader.prototype.onload = null;
+    FileReader.prototype.onloadend = null;
+    FileReader.prototype.onloadstart = null;
+    FileReader.prototype.onprogress = null;
+
+    FileReader.prototype.readAsDataURL = function (blob) {
+      _read(this, blob, 'readAsDataURL');
+      this.result = 'data:' + blob.type + ';base64,' + encodeByteArray(blob._buffer);
+    };
+
+    FileReader.prototype.readAsText = function (blob) {
+      _read(this, blob, 'readAsText');
+      this.result = fromUtf8Array(blob._buffer);
+    };
+
+    FileReader.prototype.readAsArrayBuffer = function (blob) {
+      _read(this, blob, 'readAsText');
+      this.result = blob._buffer.slice();
+    };
+
+    FileReader.prototype.abort = function () {};
+
+    /********************************************************/
+    /*                         URL                          */
+    /********************************************************/
+    URL.createObjectURL = function (blob) {
+      return blob instanceof Blob ? 'data:' + blob.type + ';base64,' + encodeByteArray(blob._buffer) : createObjectURL.call(URL, blob);
+    };
+
+    URL.revokeObjectURL = function (url) {
+      revokeObjectURL && revokeObjectURL.call(URL, url);
+    };
+
+    /********************************************************/
+    /*                         XHR                          */
+    /********************************************************/
+    var _send = global.XMLHttpRequest && global.XMLHttpRequest.prototype.send;
+    if (_send) {
+      XMLHttpRequest.prototype.send = function (data) {
+        if (data instanceof Blob) {
+          this.setRequestHeader('Content-Type', data.type);
+          _send.call(this, fromUtf8Array(data._buffer));
+        } else {
+          _send.call(this, data);
+        }
+      };
+    }
+
+    global.FileReader = FileReader;
+    global.File = File;
+    global.Blob = Blob;
+
+    if (strTag) {
+      File.prototype[strTag] = 'File';
+      Blob.prototype[strTag] = 'Blob';
+      FileReader.prototype[strTag] = 'FileReader';
+    }
+  }
+
+  function fixFileAndXHR() {
+    var isIE = !!global.ActiveXObject || '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style;
+
+    // Monkey patched
+    // IE don't set Content-Type header on XHR whose body is a typed Blob
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/6047383
+    var _send = global.XMLHttpRequest && global.XMLHttpRequest.prototype.send;
+    if (isIE && _send) {
+      XMLHttpRequest.prototype.send = function (data) {
+        if (data instanceof Blob) {
+          this.setRequestHeader('Content-Type', data.type);
+          _send.call(this, data);
+        } else {
+          _send.call(this, data);
+        }
+      };
+    }
+
+    try {
+      new File([], '');
+    } catch (e) {
+      try {
+        var klass = new Function('class File extends Blob {' + 'constructor(chunks, name, opts) {' + 'opts = opts || {};' + 'super(chunks, opts || {});' + 'this.name = name;' + 'this.lastModifiedDate = opts.lastModified ? new Date(opts.lastModified) : new Date;' + 'this.lastModified = +this.lastModifiedDate;' + '}};' + 'return new File([], ""), File')();
+        global.File = klass;
+      } catch (e) {
+        var klass = function (b, d, c) {
+          var blob = new Blob(b, c);
+          var t = c && void 0 !== c.lastModified ? new Date(c.lastModified) : new Date();
+
+          blob.name = d;
+          blob.lastModifiedDate = t;
+          blob.lastModified = +t;
+          blob.toString = function () {
+            return '[object File]';
+          };
+
+          if (strTag) blob[strTag] = 'File';
+
+          return blob;
+        };
+        global.File = klass;
+      }
+    }
+  }
+
+  if (blobSupported) {
+    fixFileAndXHR();
+    global.Blob = blobSupportsArrayBufferView ? global.Blob : BlobConstructor;
+  } else if (blobBuilderSupported) {
+    fixFileAndXHR();
+    global.Blob = BlobBuilderConstructor;
+  } else {
+    FakeBlobBuilder();
+  }
+})();
 
 /***/ }),
 

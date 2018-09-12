@@ -4,6 +4,7 @@ const Header = require('../header/Header.jsx')
 const Preview = require('./Preview.jsx')
 const Form = require('./Form.jsx')
 const AccountSelector = require('./AccountSelector.jsx')
+const uxp = require('uxp')
 
 module.exports = class ShareModal extends React.Component {
   constructor(props) {
@@ -21,6 +22,16 @@ module.exports = class ShareModal extends React.Component {
 
   dismissDialog() {
     this.props.dialog.close()
+  }
+
+  openContact() {
+    const authUrl = `${_.config.siteUrl}/contact`
+    uxp.shell.openExternal(authUrl)
+  }
+
+  openShot() {
+    const authUrl = this.state.shotUrl
+    uxp.shell.openExternal(authUrl)
   }
 
   componentDidMount() {
@@ -66,7 +77,7 @@ module.exports = class ShareModal extends React.Component {
 
     const formData = new FormData(this.refs.shotForm.refs.shotForm)
     const imageBlob = _.b64toBlob(this.state.imageData, 'image/png')
-    formData.append('image', imageBlob)
+    formData.append('image', imageBlob, 'image.png')
 
     const requestHeaders = new Headers()
     requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
@@ -74,7 +85,7 @@ module.exports = class ShareModal extends React.Component {
     fetch(`${_.config.apiUrl}/shots`, {
       method: 'POST',
       headers: requestHeaders,
-      body: formData
+      body: formData._blob()
     }).then((response) => {
       if (response.status === 202) {
         const splitUrl = response.headers.get('location').split('/')
@@ -127,11 +138,13 @@ module.exports = class ShareModal extends React.Component {
     case 'success':
       var view = (
         <div id="share-message">
-          <p>
-            Your shot has been posted. You can <a href={this.state.shotUrl}>see it here</a>.
-          </p>
+          <p>Your shot has been posted.</p>
 
-          <button onClick={this.dismissDialog.bind(this)} uxp-variant="cta">Okay</button>
+          <footer id="close-footer">
+            <div className="spacer"></div>
+            <button onClick={this.openShot.bind(this)}>Open Shot</button>
+            <button uxp-variant="cta" onClick={this.dismissDialog.bind(this)}>Okay</button>
+          </footer>
         </div>
       )
       break
@@ -139,11 +152,15 @@ module.exports = class ShareModal extends React.Component {
       var view = (
         <div id="share-message">
           <p>
-            Something went wrong on our end. You might want to try again. If this issue
-            continues please <a href={`${_.config.siteUrl}/contact`}>contact us</a>.
+            Something went wrong on our end. You might want to try again.
+            If this issue continues please contact us.
           </p>
 
-          <button onClick={this.dismissDialog.bind(this)} uxp-variant="cta">Okay</button>
+          <footer id="close-footer">
+            <div className="spacer"></div>
+            <button onClick={this.openContact.bind(this)}>Contact Support</button>
+            <button uxp-variant="cta" onClick={this.dismissDialog.bind(this)}>Okay</button>
+          </footer>
         </div>
       )
       break

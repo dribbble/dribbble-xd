@@ -15,9 +15,7 @@ const { btoa, atob } = require('Base64')
 window.btoa = btoa
 window.atob = atob
 
-const { Blob } = require('blob-polyfill')
-window.Blob = Blob
-
+require('../vendor/blob')
 require('formdata-polyfill')
 
 // === End environment setup

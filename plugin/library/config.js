@@ -2,8 +2,8 @@ module.exports = {
   platformIdentifier: 'xd',
 
   apiKey: API_CLIENT_KEY,
-  siteUrl: `https://${DOMAIN_NAME}`,
-  apiUrl: `https://api-${DOMAIN_NAME}/v2`,
+  siteUrl: SITE_URL,
+  apiUrl: API_URL,
   helpUrl: `https://help.dribbble.com/`,
 
   dimensionReqs: {
