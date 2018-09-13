@@ -20798,8 +20798,8 @@ const errorMessages = {
   badNodeType() {
     return `Sorry, we can’t currently export a ${this.props.node.constructor.name} layer. Please choose an ${_.toSentence(config.allowedNodeTypes)} from the Layers panel.`;
   },
-  tooSmall() {
-    return `Your selection is ${this.props.node.width}px × ${this.props.node.height}px, which is too small. Dribbble requires Shots to be at least ${config.dimensionReqs.width}px × ${config.dimensionReqs.height}px.`;
+  badSize() {
+    return `Your selection is ${this.props.node.width}px × ${this.props.node.height}px, which is too small. Dribbble requires Shots to be ${config.dimensionReqs.small.width}px × ${config.dimensionReqs.small.height}px or ${config.dimensionReqs.large.width}px × ${config.dimensionReqs.large.height}px.`;
   }
 };
 
@@ -21693,37 +21693,38 @@ module.exports = class ShareModal extends React.Component {
       headers: requestHeaders,
       body: formData
     }).then(response => {
+      // UNCOMMENT FOR SUCCESS PREVIEW
+      // this.setState({
+      //   headerType: 'success',
+      //   status: 'success',
+      //   shotUrl: `${_.config.siteUrl}/shots/test`
+      // })
+      // return
 
-      this.setState({
-        headerType: 'success',
-        status: 'success',
-        shotUrl: `${_.config.siteUrl}/shots/test`
-      });
+      if (response.status === 202) {
+        const splitUrl = response.headers.get('location').split('/');
 
-      // if (response.status === 202) {
-      //   const splitUrl = response.headers.get('location').split('/')
-
-      //   this.setState({
-      //     headerType: 'success',
-      //     status: 'success',
-      //     shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
-      //   })
-      // } else {
-      //   try {
-      //     response.json().then((data) => {
-      //       if (data.errors && data.errors[0].message.includes('daily limit')) {
-      //         this.setState({
-      //           headerType: 'error',
-      //           status: 'limit'
-      //         })
-      //       } else {
-      //         this.showError(data)
-      //       }
-      //     })
-      //   } catch(error) {
-      //     this.showError(error)
-      //   }
-      // }
+        this.setState({
+          headerType: 'success',
+          status: 'success',
+          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
+        });
+      } else {
+        try {
+          response.json().then(data => {
+            if (data.errors && data.errors[0].message.includes('daily limit')) {
+              this.setState({
+                headerType: 'error',
+                status: 'limit'
+              });
+            } else {
+              this.showError(data);
+            }
+          });
+        } catch (error) {
+          this.showError(error);
+        }
+      }
     }).catch(this.showError.bind(this));
   }
 
@@ -21920,8 +21921,14 @@ module.exports = {
   helpUrl: `https://help.dribbble.com/`,
 
   dimensionReqs: {
-    width: 400,
-    height: 300
+    small: {
+      width: 400,
+      height: 300
+    },
+    large: {
+      width: 800,
+      height: 600
+    }
   },
 
   allowedNodeTypes: ['Artboard', 'Rectangle',
@@ -22112,7 +22119,22 @@ const app = __webpack_require__(/*! application */ "application");
  * to see if the selection dimensions are too small
  */
 const nodeTooSmall = function (node) {
-  return node.width < config.dimensionReqs.width && node.height < config.dimensionReqs.height;
+  return node.width < config.dimensionReqs.small.width || node.height < config.dimensionReqs.small.height;
+};
+
+/**
+ * Check against our internal dimension requirements
+ * to if the selection meets one of our dimension requirements
+ */
+const nodeNotExactSize = function (node) {
+  const exactSmall = node.width === config.dimensionReqs.small.width && node.height === config.dimensionReqs.small.height;
+  const exactLarge = node.width === config.dimensionReqs.large.width && node.height === config.dimensionReqs.large.height;
+
+  if (exactSmall || exactLarge) {
+    return false;
+  } else {
+    return true;
+  }
 };
 
 /**
@@ -22253,6 +22275,7 @@ module.exports = {
   serialize,
   config,
   nodeTooSmall,
+  nodeNotExactSize,
   nodeNotAllowed,
   toSentence,
   randomString,
@@ -22314,9 +22337,9 @@ const shareCommand = async function (s) {
   } else if (_.nodeNotAllowed(selectedNode)) {
     Component = ErrorModal;
     props = { type: 'badNodeType', node: selectedNode };
-  } else if (_.nodeTooSmall(selectedNode)) {
+  } else if (_.nodeNotExactSize(selectedNode)) {
     Component = ErrorModal;
-    props = { type: 'tooSmall', node: selectedNode };
+    props = { type: 'badSize', node: selectedNode };
   } else {
     Component = ShareModal;
     props = { node: selectedNode, user: userDetails, auth: authToken };

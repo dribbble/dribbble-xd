@@ -36,9 +36,9 @@ const shareCommand = async function(s) {
   } else if (_.nodeNotAllowed(selectedNode)) {
     Component = ErrorModal
     props = { type: 'badNodeType', node: selectedNode }
-  } else if (_.nodeTooSmall(selectedNode)) {
+  } else if (_.nodeNotExactSize(selectedNode)) {
     Component = ErrorModal
-    props = { type: 'tooSmall', node: selectedNode }
+    props = { type: 'badSize', node: selectedNode }
   } else {
     Component = ShareModal
     props = { node: selectedNode, user: userDetails, auth: authToken }

@@ -32,9 +32,26 @@ const app = require('application')
  */
 const nodeTooSmall = function(node) {
   return (
-    node.width < config.dimensionReqs.width &&
-    node.height < config.dimensionReqs.height
+    node.width < config.dimensionReqs.small.width ||
+    node.height < config.dimensionReqs.small.height
   )
+}
+
+/**
+ * Check against our internal dimension requirements
+ * to if the selection meets one of our dimension requirements
+ */
+const nodeNotExactSize = function(node) {
+  const exactSmall = node.width === config.dimensionReqs.small.width &&
+                     node.height === config.dimensionReqs.small.height
+  const exactLarge = node.width === config.dimensionReqs.large.width &&
+                     node.height === config.dimensionReqs.large.height
+
+  if (exactSmall || exactLarge) {
+    return false
+  } else {
+    return true
+  }
 }
 
 /**
@@ -177,6 +194,7 @@ module.exports = {
   serialize,
   config,
   nodeTooSmall,
+  nodeNotExactSize,
   nodeNotAllowed,
   toSentence,
   randomString,

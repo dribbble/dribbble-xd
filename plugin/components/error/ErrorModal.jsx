@@ -17,8 +17,8 @@ const errorMessages = {
   badNodeType() {
     return `Sorry, we can’t currently export a ${this.props.node.constructor.name} layer. Please choose an ${_.toSentence(config.allowedNodeTypes)} from the Layers panel.`
   },
-  tooSmall() {
-    return `Your selection is ${this.props.node.width}px × ${this.props.node.height}px, which is too small. Dribbble requires Shots to be at least ${config.dimensionReqs.width}px × ${config.dimensionReqs.height}px.`
+  badSize() {
+    return `Your selection is ${this.props.node.width}px × ${this.props.node.height}px, which is too small. Dribbble requires Shots to be ${config.dimensionReqs.small.width}px × ${config.dimensionReqs.small.height}px or ${config.dimensionReqs.large.width}px × ${config.dimensionReqs.large.height}px.`
   }
 }
 
