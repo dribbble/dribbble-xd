@@ -76,8 +76,7 @@ module.exports = class ShareModal extends React.Component {
     this.setState({ submitting: true })
 
     const formData = new FormData(this.refs.shotForm.refs.shotForm)
-    const imageBlob = _.b64toBlob(this.state.imageData, 'image/png')
-    formData.append('image', imageBlob, 'image.png')
+    formData.append('image_data', `data:image/png;base64,${this.state.imageData}`)
 
     const requestHeaders = new Headers()
     requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)

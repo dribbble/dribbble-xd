@@ -16,7 +16,7 @@ window.btoa = btoa
 window.atob = atob
 
 require('../vendor/blob')
-require('../vendor/formdata')
+require('formdata-polyfill')
 
 // === End environment setup
 
@@ -102,7 +102,7 @@ const imageBase64FromNode = async function(node) {
       node: node,
       outputFile: shotFile,
       type: app.RenditionType.PNG,
-      scale: 2
+      scale: 1
     }]).then(async function(files) {
       const buffer = await files[0].read({
         format: uxp.storage.formats.binary
