@@ -85,7 +85,7 @@ module.exports = class ShareModal extends React.Component {
     fetch(`${_.config.apiUrl}/shots`, {
       method: 'POST',
       headers: requestHeaders,
-      body: formData._blob()
+      body: formData
     }).then((response) => {
       if (response.status === 202) {
         const splitUrl = response.headers.get('location').split('/')

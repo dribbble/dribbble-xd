@@ -1414,10 +1414,6 @@ form-data@~2.3.1, form-data@~2.3.2:
     combined-stream "1.0.6"
     mime-types "^2.1.12"
 
-formdata-polyfill@^3.0.12:
-  version "3.0.12"
-  resolved "https://registry.yarnpkg.com/formdata-polyfill/-/formdata-polyfill-3.0.12.tgz#43f8d9bad5408a57c4f801784526e8230b6e9f7a"
-
 fragment-cache@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/fragment-cache/-/fragment-cache-0.2.1.tgz#4290fad27f13e89be7f33799c6bc5a0abfff0d19"

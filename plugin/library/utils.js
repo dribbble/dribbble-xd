@@ -16,7 +16,7 @@ window.btoa = btoa
 window.atob = atob
 
 require('../vendor/blob')
-require('formdata-polyfill')
+require('../vendor/formdata')
 
 // === End environment setup
 
