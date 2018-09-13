@@ -87,27 +87,46 @@ module.exports = class ShareModal extends React.Component {
       headers: requestHeaders,
       body: formData
     }).then((response) => {
-      if (response.status === 202) {
-        const splitUrl = response.headers.get('location').split('/')
 
         this.setState({
           headerType: 'success',
           status: 'success',
-          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
+          shotUrl: `${_.config.siteUrl}/shots/test`
         })
-      } else {
-        this.setState({
-          headerType: 'error',
-          status: 'error'
-        })
-      }
-    }).catch((err) => {
-      console.log(err)
 
-      this.setState({
-        headerType: 'error',
-        status: 'error'
-      })
+      // if (response.status === 202) {
+      //   const splitUrl = response.headers.get('location').split('/')
+
+      //   this.setState({
+      //     headerType: 'success',
+      //     status: 'success',
+      //     shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
+      //   })
+      // } else {
+      //   try {
+      //     response.json().then((data) => {
+      //       if (data.errors && data.errors[0].message.includes('daily limit')) {
+      //         this.setState({
+      //           headerType: 'error',
+      //           status: 'limit'
+      //         })
+      //       } else {
+      //         this.showError(data)
+      //       }
+      //     })
+      //   } catch(error) {
+      //     this.showError(error)
+      //   }
+      // }
+    }).catch(this.showError.bind(this))
+  }
+
+  showError(error) {
+    console.log(error)
+
+    this.setState({
+      headerType: 'error',
+      status: 'error'
     })
   }
 
@@ -137,12 +156,20 @@ module.exports = class ShareModal extends React.Component {
       break
     case 'success':
       var view = (
-        <div id="share-message">
-          <p>Your shot has been posted.</p>
+        <div id="share-results-container">
+          <div className="body-container">
+            <p className="shot-success">Your shot has been posted!</p>
+
+            <Preview
+              imageData={this.state.imageData}
+              width={this.props.node.width}
+              height={this.props.node.height}
+            />
+          </div>
 
           <footer id="close-footer">
             <div className="spacer"></div>
-            <button onClick={this.openShot.bind(this)}>Open Shot</button>
+            <button onClick={this.openShot.bind(this)}>Open in Browser</button>
             <button uxp-variant="cta" onClick={this.dismissDialog.bind(this)}>Okay</button>
           </footer>
         </div>
@@ -150,15 +177,31 @@ module.exports = class ShareModal extends React.Component {
       break
     case 'error':
       var view = (
-        <div id="share-message">
-          <p>
-            Something went wrong on our end. You might want to try again.
-            If this issue continues please contact us.
-          </p>
+        <div id="share-results-container">
+          <div className="body-container">
+            <p>
+              Something went wrong on our end. You might want to try again.
+              If this issue continues please contact us.
+            </p>
+          </div>
 
           <footer id="close-footer">
             <div className="spacer"></div>
             <button onClick={this.openContact.bind(this)}>Contact Support</button>
+            <button uxp-variant="cta" onClick={this.dismissDialog.bind(this)}>Okay</button>
+          </footer>
+        </div>
+      )
+      break
+    case 'limit':
+      var view = (
+        <div id="share-results-container">
+          <div className="body-container">
+            <p>Sorry, you've reached your daily shot limit! Please try posting again tomorrow.</p>
+          </div>
+
+          <footer id="close-footer">
+            <div className="spacer"></div>
             <button uxp-variant="cta" onClick={this.dismissDialog.bind(this)}>Okay</button>
           </footer>
         </div>

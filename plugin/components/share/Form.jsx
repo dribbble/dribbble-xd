@@ -1,5 +1,6 @@
 const React = require('react')
 const _ = require('../../library/utils')
+const Tip = require('../common/Tip.jsx')
 const TokenField = require('../common/TokenField.jsx')
 
 module.exports = class Form extends React.Component {
@@ -23,7 +24,10 @@ module.exports = class Form extends React.Component {
 
           <label className="checkbox-container">
             <input type="checkbox" name="low_profile" value="true" />
-            <span>Hide from my default profile</span>
+            <span>
+              Hide from my default profile
+              <Tip position="right" text="Shots that are hidden from your default profile stream are called “Low Profile” shots. These shots are visible via a menu on your profile." />
+            </span>
           </label>
         </div>
 
@@ -36,12 +40,16 @@ module.exports = class Form extends React.Component {
           <label className="text-field-container">
             <span>
               Tags
+              <Tip position="left" text="Comma-separated, maximum 12 tags allowed." />
             </span>
             <TokenField name="tags" placeholder="adobexd, awesome design" />
           </label>
 
           <label className="text-field-container">
-            <span>Description</span>
+            <span>
+              Description
+              <Tip position="left" text="URLs are automatically hyperlinked. Line breaks and paragraphs are automatically generated. a, em, strong and code HTML tags are accepted." />
+            </span>
             <textarea name="description" placeholder="Tell us about your process and how you arrived at this design"></textarea>
           </label>
         </div>

@@ -510,12 +510,31 @@ input[type=hidden] {
   }
 }
 
-#share-message p {
-  font-size: 17px;
-  line-height: 5px;
-  color: #444;
+#share-results-container {
+  display: flex;
+  flex-direction: column;
+  height: 320px;
 
-  a {
-    color: #ea4c89;
+  .body-container {
+    flex: 1 0 0;
+  }
+
+  p {
+    font-size: 17px;
+    line-height: 5px;
+    color: #444;
+
+    a {
+      color: #ea4c89;
+    }
+  }
+
+  #shot-preview {
+    margin: 0 auto;
+  }
+
+  .shot-success {
+    text-align: center;
+    margin-bottom: 20px;
   }
 }

@@ -174,7 +174,7 @@ exports = module.exports = __webpack_require__(/*! ../node_modules/css-loader/li
 
 
 // module
-exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\ninput[type=hidden] {\n  display: none; }\n\n.loading-button {\n  font-size: 13px;\n  padding: 3px 15px 3px;\n  letter-spacing: .02em;\n  border: none;\n  border-radius: 20px;\n  background: #fff;\n  margin: 0 5px;\n  color: #777;\n  display: flex;\n  align-items: middle; }\n  .loading-button img {\n    width: 26px;\n    height: 26px;\n    margin: -3px 0 -10px -7px; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  box-sizing: border-box;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 10;\n  width: 308px;\n  height: 230px;\n  cursor: pointer; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px;\n  cursor: pointer; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px; }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  color: #525252;\n  margin: 0; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right;\n  position: relative; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 15px 10px;\n    height: 34px;\n    position: absolute;\n    top: -6px;\n    right: 0;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    cursor: pointer; }\n    #header-dropdown-container .trigger.active {\n      background: #333; }\n    #header-dropdown-container .trigger:not(.active):hover {\n      background: #eee;\n      border-bottom-left-radius: 5px;\n      border-bottom-right-radius: 5px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px;\n    vertical-align: top;\n    margin-bottom: 20px; }\n\n#dropdown-navigation {\n  background: #333;\n  display: block;\n  position: absolute;\n  top: 25px;\n  right: 0;\n  z-index: -10;\n  font-size: 14px;\n  line-height: 1.2;\n  text-align: left;\n  border-radius: 5px;\n  border-top-right-radius: 0; }\n  #dropdown-navigation ul {\n    list-style-type: none;\n    padding: 10px 0;\n    margin: 0; }\n  #dropdown-navigation li.divider {\n    border-top: 1px solid rgba(255, 255, 255, 0.15);\n    padding-top: 8px;\n    margin-top: 8px; }\n  #dropdown-navigation a,\n  #dropdown-navigation p {\n    margin: 0;\n    color: #999;\n    padding: 5px 15px;\n    text-decoration: none;\n    display: block;\n    width: 170px; }\n    #dropdown-navigation a:hover,\n    #dropdown-navigation p:hover {\n      color: #ddd;\n      background-color: rgba(255, 255, 255, 0.1); }\n    #dropdown-navigation a:active,\n    #dropdown-navigation p:active {\n      color: #ddd;\n      background-color: rgba(0, 0, 0, 0.3); }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  height: 320px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet footer {\n  margin-top: 30px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n\n#share-sheet .loading-button {\n  margin-top: 13px;\n  height: 23px; }\n\n#account-selector-container {\n  position: relative;\n  left: -10px;\n  top: -1px; }\n  #account-selector-container .thumb-container {\n    border-radius: 50%;\n    overflow: hidden; }\n  #account-selector-container .current-account-toggle {\n    display: flex;\n    align-items: center;\n    padding: 9px 10px;\n    margin-top: -6px;\n    border-radius: 4px;\n    text-decoration: none;\n    color: #666; }\n    #account-selector-container .current-account-toggle.toggleable {\n      cursor: pointer; }\n      #account-selector-container .current-account-toggle.toggleable:hover {\n        background-color: #eee; }\n    #account-selector-container .current-account-toggle.active {\n      background-color: #333;\n      color: #999;\n      border-top-left-radius: 0;\n      border-top-right-radius: 0; }\n      #account-selector-container .current-account-toggle.active:hover {\n        background-color: #333; }\n    #account-selector-container .current-account-toggle img {\n      width: 30px;\n      height: 30px;\n      vertical-align: bottom; }\n    #account-selector-container .current-account-toggle .name {\n      display: block;\n      color: inherit;\n      margin-left: 7px;\n      font-weight: 500; }\n    #account-selector-container .current-account-toggle .label {\n      white-space: nowrap;\n      display: block;\n      font-size: 11px;\n      opacity: 0.7; }\n    #account-selector-container .current-account-toggle .userName {\n      white-space: nowrap;\n      display: block;\n      font-size: 14px; }\n  #account-selector-container .account-selections {\n    position: absolute;\n    bottom: 50px;\n    background-color: #333;\n    color: #999;\n    border-top-left-radius: 4px;\n    border-top-right-radius: 4px;\n    overflow: hidden;\n    min-width: 100%;\n    padding: 6px 0;\n    white-space: nowrap;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.1); }\n    #account-selector-container .account-selections p {\n      white-space: nowrap;\n      color: #999;\n      padding: 5px 15px;\n      text-decoration: none;\n      display: flex;\n      font-size: 14px; }\n      #account-selector-container .account-selections p:hover {\n        color: #ddd;\n        background-color: rgba(255, 255, 255, 0.1); }\n      #account-selector-container .account-selections p:active {\n        color: #ddd;\n        background-color: rgba(0, 0, 0, 0.3); }\n      #account-selector-container .account-selections p span {\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis; }\n      #account-selector-container .account-selections p img {\n        width: 18px;\n        height: 18px;\n        vertical-align: middle;\n        border-radius: 20px;\n        overflow: hidden;\n        margin-right: 4px;\n        flex: 0 0 18px; }\n\n#shot-form {\n  display: flex;\n  flex-direction: row; }\n  #shot-form .left-column {\n    flex: 0 0 240px; }\n  #shot-form .right-column {\n    flex: 1 0 0;\n    padding-left: 25px;\n    margin-top: -5px; }\n\n.checkbox-container {\n  cursor: pointer;\n  display: flex;\n  flex-direction: row; }\n  .checkbox-container input[type=\"checkbox\"] {\n    cursor: pointer; }\n  .checkbox-container span {\n    font-size: 13px;\n    color: #444;\n    vertical-align: middle;\n    margin-top: 4px;\n    margin-left: 2px; }\n\n.text-field-container {\n  display: block; }\n  .text-field-container span {\n    display: block;\n    font-size: 13px;\n    color: #999;\n    margin-bottom: 5px;\n    cursor: pointer; }\n  .text-field-container textarea {\n    height: 90px; }\n\n#shot-preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 9px;\n  box-sizing: border-box; }\n  #shot-preview img {\n    width: 220px;\n    vertical-align: bottom; }\n\n#share-message p {\n  font-size: 17px;\n  line-height: 5px;\n  color: #444; }\n  #share-message p a {\n    color: #ea4c89; }\n", ""]);
+exports.push([module.i, ".row {\n  display: flex;\n  flex-direction: row; }\n\n.column {\n  display: flex;\n  flex-direction: column; }\n\ninput[type=hidden] {\n  display: none; }\n\n.loading-button {\n  font-size: 13px;\n  padding: 3px 15px 3px;\n  letter-spacing: .02em;\n  border: none;\n  border-radius: 20px;\n  background: #fff;\n  margin: 0 5px;\n  color: #777;\n  display: flex;\n  align-items: middle; }\n  .loading-button img {\n    width: 26px;\n    height: 26px;\n    margin: -3px 0 -10px -7px; }\n\n#login-header .container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 233px;\n  padding: 30px 40px 29px 40px;\n  box-sizing: border-box;\n  border-top: 3px solid #EA4C89; }\n\n#login-header .shot-image {\n  position: absolute;\n  top: 0;\n  right: 0;\n  z-index: 10;\n  width: 308px;\n  height: 230px;\n  cursor: pointer; }\n\n#login-header .logo img {\n  width: 150px;\n  height: 36.54px;\n  margin-top: 9px;\n  cursor: pointer; }\n\n#login-header .info {\n  width: 280px;\n  margin-top: 25px;\n  position: relative;\n  z-index: 1; }\n  #login-header .info h1 {\n    font-size: 18px;\n    font-weight: 700; }\n  #login-header .info p {\n    margin-top: 10px;\n    font-size: 15px;\n    line-height: 3px; }\n  #login-header .info.light h1,\n  #login-header .info.light p {\n    color: #fff; }\n  #login-header .info.dark h1 {\n    color: #444; }\n  #login-header .info.dark p {\n    color: #555555; }\n\n#login-header .border {\n  position: absolute;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n  height: 1px;\n  background-color: #E5E5E5; }\n\n#login-header .spacer {\n  height: 200px;\n  margin-bottom: 30px; }\n\n#login-footer .message {\n  text-align: center;\n  font-size: 16px;\n  line-height: 20px;\n  color: #525252;\n  margin: 0; }\n\n#login-footer .container {\n  margin-top: 15px;\n  display: flex;\n  flex-direction: row; }\n\n#login-footer .spacer {\n  flex: 1 0 0; }\n\n#login-footer .container .button-group {\n  display: flex; }\n\n#login-footer .container button {\n  margin: 0 5px; }\n\n#errors .message {\n  font-size: 16px;\n  line-height: 5px;\n  /* this doesn't seem right */\n  color: #525252; }\n\n#close-footer {\n  margin-top: 35px;\n  display: flex;\n  flex-direction: row; }\n  #close-footer .spacer {\n    flex: 1 0 0; }\n\n#share-header {\n  height: 78px;\n  margin-bottom: 30px; }\n  #share-header header {\n    position: absolute;\n    top: 0;\n    left: 0;\n    background-color: #fff;\n    width: 100%;\n    padding: 25px 40px 23px 40px;\n    border-top: 3px solid #EA4C89; }\n  #share-header .top-section {\n    display: flex;\n    flex-direction: row; }\n  #share-header .border {\n    position: absolute;\n    bottom: 0;\n    left: 0;\n    width: 100%;\n    height: 1px;\n    background-color: #E5E5E5; }\n  #share-header .logo {\n    flex: 0 0 78px; }\n    #share-header .logo img {\n      width: 78px;\n      height: 19px; }\n  #share-header .title {\n    display: flex;\n    flex-direction: row;\n    margin-top: 13px; }\n    #share-header .title img {\n      width: 24px;\n      height: 24px;\n      flex: 0 0 24px;\n      margin-top: 3px; }\n    #share-header .title span {\n      margin-left: 9px;\n      font-size: 24px;\n      font-weight: 700;\n      color: #444; }\n\n#header-dropdown-container {\n  flex: 1 0 0;\n  text-align: right;\n  position: relative; }\n  #header-dropdown-container .trigger {\n    display: block;\n    padding: 15px 10px;\n    height: 34px;\n    position: absolute;\n    top: -6px;\n    right: 0;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    cursor: pointer; }\n    #header-dropdown-container .trigger.active {\n      background: #333; }\n    #header-dropdown-container .trigger:not(.active):hover {\n      background: #eee;\n      border-bottom-left-radius: 5px;\n      border-bottom-right-radius: 5px; }\n  #header-dropdown-container .dots {\n    width: 22px;\n    height: 5.5px;\n    vertical-align: top;\n    margin-bottom: 20px; }\n\n#dropdown-navigation {\n  background: #333;\n  display: block;\n  position: absolute;\n  top: 25px;\n  right: 0;\n  z-index: -10;\n  font-size: 14px;\n  line-height: 1.2;\n  text-align: left;\n  border-radius: 5px;\n  border-top-right-radius: 0; }\n  #dropdown-navigation ul {\n    list-style-type: none;\n    padding: 10px 0;\n    margin: 0; }\n  #dropdown-navigation li.divider {\n    border-top: 1px solid rgba(255, 255, 255, 0.15);\n    padding-top: 8px;\n    margin-top: 8px; }\n  #dropdown-navigation a,\n  #dropdown-navigation p {\n    margin: 0;\n    color: #999;\n    padding: 5px 15px;\n    text-decoration: none;\n    display: block;\n    width: 170px; }\n    #dropdown-navigation a:hover,\n    #dropdown-navigation p:hover {\n      color: #ddd;\n      background-color: rgba(255, 255, 255, 0.1); }\n    #dropdown-navigation a:active,\n    #dropdown-navigation p:active {\n      color: #ddd;\n      background-color: rgba(0, 0, 0, 0.3); }\n\n#share-sheet .loading-container {\n  position: relative;\n  width: 100%;\n  height: 320px; }\n\n#share-sheet .loading-image {\n  width: 32px;\n  height: 32px;\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin-top: -16px;\n  margin-left: -16px; }\n\n#share-sheet footer {\n  margin-top: 30px;\n  display: flex;\n  flex-direction: row; }\n\n#share-sheet footer button {\n  margin-left: 10px; }\n\n#share-sheet footer .spacer {\n  flex: 1 0 0; }\n\n#share-sheet .loading-button {\n  margin-top: 13px;\n  height: 23px; }\n\n#account-selector-container {\n  position: relative;\n  left: -10px;\n  top: -1px; }\n  #account-selector-container .thumb-container {\n    border-radius: 50%;\n    overflow: hidden; }\n  #account-selector-container .current-account-toggle {\n    display: flex;\n    align-items: center;\n    padding: 9px 10px;\n    margin-top: -6px;\n    border-radius: 4px;\n    text-decoration: none;\n    color: #666; }\n    #account-selector-container .current-account-toggle.toggleable {\n      cursor: pointer; }\n      #account-selector-container .current-account-toggle.toggleable:hover {\n        background-color: #eee; }\n    #account-selector-container .current-account-toggle.active {\n      background-color: #333;\n      color: #999;\n      border-top-left-radius: 0;\n      border-top-right-radius: 0; }\n      #account-selector-container .current-account-toggle.active:hover {\n        background-color: #333; }\n    #account-selector-container .current-account-toggle img {\n      width: 30px;\n      height: 30px;\n      vertical-align: bottom; }\n    #account-selector-container .current-account-toggle .name {\n      display: block;\n      color: inherit;\n      margin-left: 7px;\n      font-weight: 500; }\n    #account-selector-container .current-account-toggle .label {\n      white-space: nowrap;\n      display: block;\n      font-size: 11px;\n      opacity: 0.7; }\n    #account-selector-container .current-account-toggle .userName {\n      white-space: nowrap;\n      display: block;\n      font-size: 14px; }\n  #account-selector-container .account-selections {\n    position: absolute;\n    bottom: 50px;\n    background-color: #333;\n    color: #999;\n    border-top-left-radius: 4px;\n    border-top-right-radius: 4px;\n    overflow: hidden;\n    min-width: 100%;\n    padding: 6px 0;\n    white-space: nowrap;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.1); }\n    #account-selector-container .account-selections p {\n      white-space: nowrap;\n      color: #999;\n      padding: 5px 15px;\n      text-decoration: none;\n      display: flex;\n      font-size: 14px; }\n      #account-selector-container .account-selections p:hover {\n        color: #ddd;\n        background-color: rgba(255, 255, 255, 0.1); }\n      #account-selector-container .account-selections p:active {\n        color: #ddd;\n        background-color: rgba(0, 0, 0, 0.3); }\n      #account-selector-container .account-selections p span {\n        white-space: nowrap;\n        overflow: hidden;\n        text-overflow: ellipsis; }\n      #account-selector-container .account-selections p img {\n        width: 18px;\n        height: 18px;\n        vertical-align: middle;\n        border-radius: 20px;\n        overflow: hidden;\n        margin-right: 4px;\n        flex: 0 0 18px; }\n\n#shot-form {\n  display: flex;\n  flex-direction: row; }\n  #shot-form .left-column {\n    flex: 0 0 240px; }\n  #shot-form .right-column {\n    flex: 1 0 0;\n    padding-left: 25px;\n    margin-top: -5px; }\n\n.checkbox-container {\n  cursor: pointer;\n  display: flex;\n  flex-direction: row; }\n  .checkbox-container input[type=\"checkbox\"] {\n    cursor: pointer; }\n  .checkbox-container span {\n    font-size: 13px;\n    color: #444;\n    vertical-align: middle;\n    margin-top: 4px;\n    margin-left: 2px; }\n\n.text-field-container {\n  display: block; }\n  .text-field-container span {\n    display: block;\n    font-size: 13px;\n    color: #999;\n    margin-bottom: 5px;\n    cursor: pointer; }\n  .text-field-container textarea {\n    height: 90px; }\n\n#shot-preview {\n  width: 240px;\n  margin-bottom: 15px;\n  border: 1px solid #E1E1E1;\n  border-radius: 4px;\n  padding: 9px;\n  box-sizing: border-box; }\n  #shot-preview img {\n    width: 220px;\n    vertical-align: bottom; }\n\n#share-results-container {\n  display: flex;\n  flex-direction: column;\n  height: 320px; }\n  #share-results-container .body-container {\n    flex: 1 0 0; }\n  #share-results-container p {\n    font-size: 17px;\n    line-height: 5px;\n    color: #444; }\n    #share-results-container p a {\n      color: #ea4c89; }\n  #share-results-container #shot-preview {\n    margin: 0 auto; }\n  #share-results-container .shot-success {\n    text-align: center;\n    margin-bottom: 20px; }\n", ""]);
 
 // exports
 
@@ -20710,6 +20710,39 @@ module.exports = class CloseFooter extends React.Component {
 
 /***/ }),
 
+/***/ "./plugin/components/common/Tip.jsx":
+/*!******************************************!*\
+  !*** ./plugin/components/common/Tip.jsx ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+module.exports = class Tip extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    // Disabled for now
+    return null;
+
+    return React.createElement(
+      "span",
+      { className: "tool-tip" },
+      React.createElement("img", { src: "plugin/images/icon-help-circle.png" }),
+      React.createElement(
+        "p",
+        { className: this.props.position },
+        this.props.text
+      )
+    );
+  }
+};
+
+/***/ }),
+
 /***/ "./plugin/components/common/TokenField.jsx":
 /*!*************************************************!*\
   !*** ./plugin/components/common/TokenField.jsx ***!
@@ -21458,6 +21491,7 @@ module.exports = class AccountSelector extends React.Component {
 
 const React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 const _ = __webpack_require__(/*! ../../library/utils */ "./plugin/library/utils.js");
+const Tip = __webpack_require__(/*! ../common/Tip.jsx */ "./plugin/components/common/Tip.jsx");
 const TokenField = __webpack_require__(/*! ../common/TokenField.jsx */ "./plugin/components/common/TokenField.jsx");
 
 module.exports = class Form extends React.Component {
@@ -21485,7 +21519,8 @@ module.exports = class Form extends React.Component {
           React.createElement(
             'span',
             null,
-            'Hide from my default profile'
+            'Hide from my default profile',
+            React.createElement(Tip, { position: 'right', text: 'Shots that are hidden from your default profile stream are called \u201CLow Profile\u201D shots. These shots are visible via a menu on your profile.' })
           )
         )
       ),
@@ -21508,7 +21543,8 @@ module.exports = class Form extends React.Component {
           React.createElement(
             'span',
             null,
-            'Tags'
+            'Tags',
+            React.createElement(Tip, { position: 'left', text: 'Comma-separated, maximum 12 tags allowed.' })
           ),
           React.createElement(TokenField, { name: 'tags', placeholder: 'adobexd, awesome design' })
         ),
@@ -21518,7 +21554,8 @@ module.exports = class Form extends React.Component {
           React.createElement(
             'span',
             null,
-            'Description'
+            'Description',
+            React.createElement(Tip, { position: 'left', text: 'URLs are automatically hyperlinked. Line breaks and paragraphs are automatically generated. a, em, strong and code HTML tags are accepted.' })
           ),
           React.createElement('textarea', { name: 'description', placeholder: 'Tell us about your process and how you arrived at this design' })
         )
@@ -21645,46 +21682,57 @@ module.exports = class ShareModal extends React.Component {
     this.setState({ submitting: true });
 
     const formData = new FormData(this.refs.shotForm.refs.shotForm);
-    // const imageBlob = _.b64toBlob(this.state.imageData, 'image/png')
-    // formData.append('image', imageBlob, 'image.png')
+    const imageBlob = _.b64toBlob(this.state.imageData, 'image/png');
+    formData.append('image', imageBlob, 'image.png');
 
     const requestHeaders = new Headers();
     requestHeaders.append('Authorization', `Bearer ${this.props.auth}`);
-
-    console.log(`${_.config.apiUrl}/shots`);
 
     fetch(`${_.config.apiUrl}/shots`, {
       method: 'POST',
       headers: requestHeaders,
       body: formData
     }).then(response => {
-      console.log(response);
-
-      response.json().then(data => {
-        console.log(data);
-      });
-
-      if (response.status === 202) {
-        const splitUrl = response.headers.get('location').split('/');
-
-        this.setState({
-          headerType: 'success',
-          status: 'success',
-          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
-        });
-      } else {
-        this.setState({
-          headerType: 'error',
-          status: 'error'
-        });
-      }
-    }).catch(err => {
-      console.log(err);
 
       this.setState({
-        headerType: 'error',
-        status: 'error'
+        headerType: 'success',
+        status: 'success',
+        shotUrl: `${_.config.siteUrl}/shots/test`
       });
+
+      // if (response.status === 202) {
+      //   const splitUrl = response.headers.get('location').split('/')
+
+      //   this.setState({
+      //     headerType: 'success',
+      //     status: 'success',
+      //     shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
+      //   })
+      // } else {
+      //   try {
+      //     response.json().then((data) => {
+      //       if (data.errors && data.errors[0].message.includes('daily limit')) {
+      //         this.setState({
+      //           headerType: 'error',
+      //           status: 'limit'
+      //         })
+      //       } else {
+      //         this.showError(data)
+      //       }
+      //     })
+      //   } catch(error) {
+      //     this.showError(error)
+      //   }
+      // }
+    }).catch(this.showError.bind(this));
+  }
+
+  showError(error) {
+    console.log(error);
+
+    this.setState({
+      headerType: 'error',
+      status: 'error'
     });
   }
 
@@ -21715,11 +21763,20 @@ module.exports = class ShareModal extends React.Component {
       case 'success':
         var view = React.createElement(
           'div',
-          { id: 'share-message' },
+          { id: 'share-results-container' },
           React.createElement(
-            'p',
-            null,
-            'Your shot has been posted.'
+            'div',
+            { className: 'body-container' },
+            React.createElement(
+              'p',
+              { className: 'shot-success' },
+              'Your shot has been posted!'
+            ),
+            React.createElement(Preview, {
+              imageData: this.state.imageData,
+              width: this.props.node.width,
+              height: this.props.node.height
+            })
           ),
           React.createElement(
             'footer',
@@ -21728,7 +21785,7 @@ module.exports = class ShareModal extends React.Component {
             React.createElement(
               'button',
               { onClick: this.openShot.bind(this) },
-              'Open Shot'
+              'Open in Browser'
             ),
             React.createElement(
               'button',
@@ -21741,11 +21798,15 @@ module.exports = class ShareModal extends React.Component {
       case 'error':
         var view = React.createElement(
           'div',
-          { id: 'share-message' },
+          { id: 'share-results-container' },
           React.createElement(
-            'p',
-            null,
-            'Something went wrong on our end. You might want to try again. If this issue continues please contact us.'
+            'div',
+            { className: 'body-container' },
+            React.createElement(
+              'p',
+              null,
+              'Something went wrong on our end. You might want to try again. If this issue continues please contact us.'
+            )
           ),
           React.createElement(
             'footer',
@@ -21756,6 +21817,31 @@ module.exports = class ShareModal extends React.Component {
               { onClick: this.openContact.bind(this) },
               'Contact Support'
             ),
+            React.createElement(
+              'button',
+              { 'uxp-variant': 'cta', onClick: this.dismissDialog.bind(this) },
+              'Okay'
+            )
+          )
+        );
+        break;
+      case 'limit':
+        var view = React.createElement(
+          'div',
+          { id: 'share-results-container' },
+          React.createElement(
+            'div',
+            { className: 'body-container' },
+            React.createElement(
+              'p',
+              null,
+              'Sorry, you\'ve reached your daily shot limit! Please try posting again tomorrow.'
+            )
+          ),
+          React.createElement(
+            'footer',
+            { id: 'close-footer' },
+            React.createElement('div', { className: 'spacer' }),
             React.createElement(
               'button',
               { 'uxp-variant': 'cta', onClick: this.dismissDialog.bind(this) },
@@ -21830,7 +21916,7 @@ module.exports = {
 
   apiKey: "62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5",
   siteUrl: "https://staging.dribbble.com",
-  apiUrl: "http://api.dribbble.work:3000/v2",
+  apiUrl: "https://api-staging.dribbble.com/v2",
   helpUrl: `https://help.dribbble.com/`,
 
   dimensionReqs: {
