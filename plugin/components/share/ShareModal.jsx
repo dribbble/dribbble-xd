@@ -87,37 +87,38 @@ module.exports = class ShareModal extends React.Component {
       headers: requestHeaders,
       body: formData
     }).then((response) => {
+      // UNCOMMENT FOR SUCCESS PREVIEW
+      // this.setState({
+      //   headerType: 'success',
+      //   status: 'success',
+      //   shotUrl: `${_.config.siteUrl}/shots/test`
+      // })
+      // return
+
+      if (response.status === 202) {
+        const splitUrl = response.headers.get('location').split('/')
 
         this.setState({
           headerType: 'success',
           status: 'success',
-          shotUrl: `${_.config.siteUrl}/shots/test`
+          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
         })
-
-      // if (response.status === 202) {
-      //   const splitUrl = response.headers.get('location').split('/')
-
-      //   this.setState({
-      //     headerType: 'success',
-      //     status: 'success',
-      //     shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
-      //   })
-      // } else {
-      //   try {
-      //     response.json().then((data) => {
-      //       if (data.errors && data.errors[0].message.includes('daily limit')) {
-      //         this.setState({
-      //           headerType: 'error',
-      //           status: 'limit'
-      //         })
-      //       } else {
-      //         this.showError(data)
-      //       }
-      //     })
-      //   } catch(error) {
-      //     this.showError(error)
-      //   }
-      // }
+      } else {
+        try {
+          response.json().then((data) => {
+            if (data.errors && data.errors[0].message.includes('daily limit')) {
+              this.setState({
+                headerType: 'error',
+                status: 'limit'
+              })
+            } else {
+              this.showError(data)
+            }
+          })
+        } catch(error) {
+          this.showError(error)
+        }
+      }
     }).catch(this.showError.bind(this))
   }
 
