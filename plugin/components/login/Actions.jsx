@@ -14,9 +14,9 @@ module.exports = class Actions extends React.Component {
 
   messages(status) {
     return ({
-      login: 'To share your work from Adobe XD, please log in.',
-      authing: 'Once authenticated in your browser, hit Okay.',
-      authfail: 'We couldn’t get your auth token. Try again?',
+      login: 'To share your work from Adobe XD, please log in to Dribbble.',
+      authing: 'Once authenticated in your browser, click "Ready" below.',
+      authfail: 'We couldn’t retrieve your authentication token. Try again?',
       loading: 'One moment, we’re checking Dribbble...',
       error: 'Something went wrong. Want to try again?',
       success: 'You’re all set! Re-open this dialog to start sharing.'
@@ -75,7 +75,12 @@ module.exports = class Actions extends React.Component {
     case 'authing':
     case 'authfail':
       var activeButton = (
-        <button onClick={this.checkAuthedState.bind(this)} uxp-variant="cta">Okay</button>
+        <button onClick={this.checkAuthedState.bind(this)} uxp-variant="cta">Ready</button>
+      )
+      break
+    case 'authfail':
+      var activeButton = (
+        <button onClick={this.checkAuthedState.bind(this)} uxp-variant="cta">Try again</button>
       )
       break
     case 'error':
