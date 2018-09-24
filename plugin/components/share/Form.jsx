@@ -12,6 +12,12 @@ module.exports = class Form extends React.Component {
     this.props.setTitleState(this.refs.titleField.value)
   }
 
+  handleKeyPress(event) {
+    if (event.key == 'Enter') {
+      this.props.submitShot()
+    }
+  }
+
   render() {
     return (
       <form id="shot-form" ref="shotForm">
@@ -34,7 +40,7 @@ module.exports = class Form extends React.Component {
         <div className="right-column">
           <label className="text-field-container">
             <span>Title</span>
-            <input ref="titleField" type="text" name="title" placeholder="Title of your shot" defaultValue={this.props.node.name} onChange={this.props.setTitleState} />
+            <input ref="titleField" type="text" name="title" placeholder="Title of your shot" defaultValue={this.props.node.name} onChange={this.props.setTitleState} onKeyPress={this.handleKeyPress.bind(this)} />
           </label>
 
           <label className="text-field-container">
@@ -42,7 +48,7 @@ module.exports = class Form extends React.Component {
               Tags
               <Tip position="left" text="Comma-separated, maximum 12 tags allowed." />
             </span>
-            <TokenField name="tags" placeholder="adobexd, awesome design" />
+            <TokenField name="tags" placeholder="adobexd, awesome design" onKeyPress={this.handleKeyPress.bind(this)} />
           </label>
 
           <label className="text-field-container">
