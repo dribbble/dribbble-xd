@@ -58,7 +58,10 @@ module.exports = class AccountSelector extends React.Component {
           </div>
           <p className="name">
             <span className="label">Posting as</span>
-            <span className="userName">{this.state.selected.name} &#9662;</span>
+            <span className="userName">
+              {this.state.selected.name}
+              {this.state.canChange ? '&#9662;' : ''}
+            </span>
           </p>
         </div>
 
