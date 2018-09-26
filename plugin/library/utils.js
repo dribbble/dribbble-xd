@@ -190,6 +190,13 @@ const b64toBlob = function(b64Data, contentType='', sliceSize=512) {
   return new Blob(byteArrays, { type: contentType })
 }
 
+const nodeContains = function(node, el) {
+  while (el = el.parentNode) {
+    if (el === node) return true
+  }
+  return false
+}
+
 module.exports = {
   serialize,
   config,
@@ -204,4 +211,5 @@ module.exports = {
   serializeObject,
   storage,
   b64toBlob,
+  nodeContains,
 }
