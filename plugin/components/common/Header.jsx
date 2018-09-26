@@ -1,29 +1,36 @@
 const React = require('react')
-const Dropdown = require('./Dropdown.jsx')
 const _ = require('../../library/utils')
 
 const titleTypes = {
   error: {
     text: 'Whoops!',
-    icon: 'x-cloud.png'
+    icon: 'cloud-error.png'
   },
   success: {
     text: 'Success!',
-    icon: 'check-cloud.png'
+    icon: 'cloud-success.png'
   },
   connection: {
     text: 'No connection',
-    icon: 'x-cloud.png'
+    icon: 'cloud-error.png'
   },
   share: {
     text: 'Share this selection',
-    icon: 'upload-cloud.png'
+    icon: 'cloud-upload.png'
   }
 }
 
 module.exports = class Header extends React.Component {
   constructor(props) {
     super(props)
+  }
+
+  logout() {
+    _.storage.destroy('authToken').then(() => {
+      _.storage.destroy('userDetails').then(() => {
+        this.props.dialog.close()
+      })
+    })
   }
 
   render() {
@@ -39,7 +46,11 @@ module.exports = class Header extends React.Component {
               </a>
             </div>
 
-            <Dropdown dialog={this.props.dialog} />
+            <div id="logout-container">
+              <div id="logout-icon-container" onClick={this.logout.bind(this)}>
+                <img src="plugin/images/logout-icon.png" />
+              </div>
+            </div>
           </div>
 
           <p className="title">

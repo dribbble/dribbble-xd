@@ -1,7 +1,7 @@
 const React = require('react')
 const config = require('../../library/config')
 const _ = require('../../library/utils')
-const Header = require('../header/Header.jsx')
+const Header = require('../common/Header.jsx')
 const CloseFooter = require('../common/CloseFooter.jsx')
 
 const errorMessages = {

@@ -213,84 +213,59 @@ input[type=hidden] {
   }
 }
 
-#header-dropdown-container {
+#logout-container {
   flex: 1 0 0;
   text-align: right;
   position: relative;
 
-  .trigger {
-    display: block;
-    padding: 15px 10px;
-    height: 34px;
-    position: absolute;
-    top: -6px;
-    right: 0;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+  #logout-icon-container {
+    padding: 8px 7px;
+    border-radius: 5px;
     cursor: pointer;
-
-    &.active {
-      background: #333;
-    }
-
-    &:not(.active):hover {
-      background: #eee;
-      border-bottom-left-radius: 5px;
-      border-bottom-right-radius: 5px;
-    }
-  }
-
-  .dots {
-    width: 22px;
-    height: 5.5px;
-    vertical-align: top;
-    margin-bottom: 20px;
-  }
-}
-
-#dropdown-navigation {
-  background: #333;
-  display: block;
-  position: absolute;
-  top: 25px;
-  right: 0;
-  z-index: -10;
-  font-size: 14px;
-  text-align: left;
-  border-radius: 5px;
-  border-top-right-radius: 0;
-
-  ul {
-    list-style-type: none;
-    padding: 10px 0;
-    margin: 0;
-  }
-
-  li.divider {
-    border-top: 1px solid rgba(255,255,255,0.15);
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-
-  a,
-  p {
-    margin: 0;
-    color: #999;
-    padding: 5px 15px;
-    text-decoration: none;
-    display: block;
-    width: 170px;
+    position: absolute;
+    top: -8px;
+    right: 0;
+    opacity: 0.5;
 
     &:hover {
-      color: #ddd;
-      background-color: rgba(255,255,255,0.1);
-    }
-
-    &:active {
-      color: #ddd;
-      background-color: rgba(0,0,0,0.3);
+      background: #eee;
+      opacity: 1;
     }
   }
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
+
+  // .trigger {
+  //   display: block;
+  //   padding: 15px 10px;
+  //   height: 34px;
+  //   position: absolute;
+  //   top: -6px;
+  //   right: 0;
+  //   border-top-left-radius: 5px;
+  //   border-top-right-radius: 5px;
+  //   cursor: pointer;
+
+  //   &.active {
+  //     background: #333;
+  //   }
+
+  //   &:not(.active):hover {
+  //     background: #eee;
+  //     border-bottom-left-radius: 5px;
+  //     border-bottom-right-radius: 5px;
+  //   }
+  // }
+
+  // .dots {
+  //   width: 22px;
+  //   height: 5.5px;
+  //   vertical-align: top;
+  //   margin-bottom: 20px;
+  // }
 }
 
 #share-sheet {

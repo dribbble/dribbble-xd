@@ -1,6 +1,6 @@
 const React = require('react')
 const _ = require('../../library/utils')
-const Header = require('../header/Header.jsx')
+const Header = require('../common/Header.jsx')
 const Preview = require('./Preview.jsx')
 const Form = require('./Form.jsx')
 const AccountSelector = require('./AccountSelector.jsx')
