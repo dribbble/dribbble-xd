@@ -60,7 +60,7 @@ module.exports = class AccountSelector extends React.Component {
             <span className="label">Posting as</span>
             <span className="userName">
               {this.state.selected.name}
-              {this.state.canChange ? '&#9662;' : ''}
+              {this.state.canChange ? ' ▾' : ''}
             </span>
           </p>
         </div>

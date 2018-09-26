@@ -25,11 +25,6 @@ module.exports = class Form extends React.Component {
 
         <div className="left-column">
           { this.props.preview }
-
-          <label className="checkbox-container">
-            <input type="checkbox" name="low_profile" value="true" />
-            <span>Hide from my default profile</span>
-          </label>
         </div>
 
         <div className="right-column">
@@ -46,6 +41,11 @@ module.exports = class Form extends React.Component {
           <label className="text-field-container">
             <span>Description</span>
             <textarea name="description" placeholder="Tell us about your process and how you arrived at this design"></textarea>
+          </label>
+
+          <label className="checkbox-container">
+            <input type="checkbox" name="low_profile" value="true" />
+            <span>Hide from my default profile</span>
           </label>
         </div>
       </form>
