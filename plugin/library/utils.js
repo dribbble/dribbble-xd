@@ -103,8 +103,8 @@ const imageBase64FromNode = async function(node) {
       outputFile: shotFile,
       type: app.RenditionType.PNG,
       scale: 1
-    }]).then(async function(files) {
-      const buffer = await files[0].read({
+    }]).then(async function(renditions) {
+      const buffer = await renditions[0].outputFile.read({
         format: uxp.storage.formats.binary
       })
 
