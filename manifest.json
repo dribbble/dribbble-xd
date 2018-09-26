@@ -8,17 +8,17 @@
     {
       "width": 512,
       "height": 512,
-      "path": "plugin/images/512.png"
+      "path": "plugin/images/icons/512.png"
     },
     {
       "width": 48,
       "height": 48,
-      "path": "plugin/images/48.png"
+      "path": "plugin/images/icons/48.png"
     },
     {
       "width": 24,
       "height": 24,
-      "path": "plugin/images/24.png"
+      "path": "plugin/images/icons/24.png"
     }
   ],
   "host": {
