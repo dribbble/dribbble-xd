@@ -1,5 +1,6 @@
 const React = require('react')
 const Dropdown = require('./Dropdown.jsx')
+const _ = require('../../library/utils')
 
 const titleTypes = {
   error: {
@@ -33,9 +34,9 @@ module.exports = class Header extends React.Component {
         <header>
           <div className="top-section">
             <div className="logo-container">
-              <div className="logo">
+              <a href={`${_.config.siteUrl}/?utm_source=xd-plugin`} className="logo">
                 <img src="plugin/images/dribbble-logo.png" />
-              </div>
+              </a>
             </div>
 
             <Dropdown dialog={this.props.dialog} />
