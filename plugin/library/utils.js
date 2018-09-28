@@ -32,26 +32,30 @@ const app = require('application')
  */
 const nodeTooSmall = function(node) {
   return (
-    node.width < config.dimensionReqs.small.width ||
-    node.height < config.dimensionReqs.small.height
+    node.width < config.dimensionReqs.min.width ||
+    node.height < config.dimensionReqs.min.height
   )
 }
 
 /**
  * Check against our internal dimension requirements
- * to if the selection meets one of our dimension requirements
+ * to see if the selection dimensions are too large
  */
-const nodeNotExactSize = function(node) {
-  const exactSmall = node.width === config.dimensionReqs.small.width &&
-                     node.height === config.dimensionReqs.small.height
-  const exactLarge = node.width === config.dimensionReqs.large.width &&
-                     node.height === config.dimensionReqs.large.height
+const nodeTooLarge = function(node) {
+  return (
+    node.width > config.dimensionReqs.max.width ||
+    node.height > config.dimensionReqs.max.height
+  )
+}
 
-  if (exactSmall || exactLarge) {
-    return false
-  } else {
-    return true
-  }
+/**
+ * Check against our internal dimension requirements
+ * to see if the selection dimensions are not the accepted ratio
+ */
+const nodeBadRatio = function(node) {
+  const allowedRatio = config.dimensionReqs.min.width / config.dimensionReqs.min.height
+  const actualRatio = node.width / node.height
+  return allowedRatio !== actualRatio
 }
 
 /**
@@ -201,7 +205,8 @@ module.exports = {
   serialize,
   config,
   nodeTooSmall,
-  nodeNotExactSize,
+  nodeTooLarge,
+  nodeBadRatio,
   nodeNotAllowed,
   toSentence,
   randomString,

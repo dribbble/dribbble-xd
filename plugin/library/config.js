@@ -7,13 +7,13 @@ module.exports = {
   helpUrl: `https://help.dribbble.com/`,
 
   dimensionReqs: {
-    small: {
+    min: {
       width: 400,
       height: 300
     },
-    large: {
-      width: 800,
-      height: 600
+    max: {
+      width: 1600,
+      height: 1200
     }
   },
 

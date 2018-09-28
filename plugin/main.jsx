@@ -36,9 +36,15 @@ const shareCommand = async function(s) {
   } else if (_.nodeNotAllowed(selectedNode)) {
     Component = ErrorModal
     props = { type: 'badNodeType', node: selectedNode }
-  } else if (_.nodeNotExactSize(selectedNode)) {
+  } else if (_.nodeBadRatio(selectedNode)) {
     Component = ErrorModal
-    props = { type: 'badSize', node: selectedNode }
+    props = { type: 'badRatio', node: selectedNode }
+  } else if (_.nodeTooSmall(selectedNode)) {
+    Component = ErrorModal
+    props = { type: 'tooSmall', node: selectedNode }
+  } else if (_.nodeTooLarge(selectedNode)) {
+    Component = ErrorModal
+    props = { type: 'tooLarge', node: selectedNode }
   } else {
     Component = ShareModal
     props = { node: selectedNode, user: userDetails, auth: authToken }
