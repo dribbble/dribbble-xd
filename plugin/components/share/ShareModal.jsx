@@ -209,7 +209,7 @@ module.exports = class ShareModal extends React.Component {
       break
     case 'ready':
       var view = (
-        <div>
+        <div className="form-container">
           <Form
             ref="shotForm"
             node={this.props.node}
