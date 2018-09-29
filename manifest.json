@@ -29,7 +29,11 @@
     {
       "type": "menu",
       "label": "Share Dribbble Shot",
-      "commandId": "share"
+      "commandId": "share",
+      "shortcut": {
+        "mac": "Cmd+Shift+D",
+        "win": "Ctrl+Shift+D"
+      }
     }
   ]
 }
