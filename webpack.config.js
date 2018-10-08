@@ -1,5 +1,6 @@
 require('dotenv').config()
 const WebpackDefinePlugin = require('webpack').DefinePlugin
+const production = process.env.NODE_ENV === 'production'
 
 module.exports = {
   entry: './plugin/main.jsx',
@@ -44,10 +45,22 @@ module.exports = {
   },
   plugins: [
     new WebpackDefinePlugin({
-      API_CLIENT_KEY: JSON.stringify(process.env.API_CLIENT_KEY || '62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5'),
-      SITE_URL: JSON.stringify(process.env.SITE_URL || 'https://dribbble.com'),
-      API_URL: JSON.stringify(process.env.API_URL || null),
-      STAGING_AUTH: JSON.stringify(process.env.STAGING_AUTH || null)
+      API_CLIENT_KEY: JSON.stringify(!production
+        ? process.env.API_CLIENT_KEY
+        : '62deac8a106c866b6047c864a24cdab7f0d03b6330e0099bfeda45eac6a1b8b5'
+      ),
+      SITE_URL: JSON.stringify(!production
+        ? process.env.SITE_URL
+        : 'https://dribbble.com'
+      ),
+      API_URL: JSON.stringify(!production
+        ? process.env.API_URL
+        : 'https://api.dribbble.com/v2'
+      ),
+      STAGING_AUTH: JSON.stringify(!production
+        ? process.env.STAGING_AUTH
+        : null
+      )
     })
   ]
 }
