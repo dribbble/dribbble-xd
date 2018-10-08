@@ -1,15 +1,5 @@
 module.exports = [
   {
-    filename: 'saturn-hula-hooping.gif',
-    user: 'Gal Shir',
-    title: 'Saturn Hula Hooping',
-    url: 'https://dribbble.com/shots/4252236-Saturn-Hula-Hooping',
-    backgroundColor: '#38216B',
-    textColor: '#ff616e',
-    headingColor: '#fff',
-    logo: 'light'
-  },
-  {
     filename: 'connected-to-nature.png',
     user: 'Julia',
     title: 'Feeling connected to nature',
@@ -17,16 +7,6 @@ module.exports = [
     backgroundColor: '#fff',
     textColor: '#444',
     headingColor: '#FF5A6D',
-    logo: 'dark'
-  },
-  {
-    filename: 'taxi-driver.gif',
-    user: 'Aslan A.',
-    title: 'MyTaxi Driver',
-    url: 'https://dribbble.com/shots/4015806-MyTaxi-Driver',
-    backgroundColor: '#FECC02',
-    textColor: '#494949',
-    headingColor: '#FDFDFD',
     logo: 'dark'
   },
   {
@@ -47,16 +27,6 @@ module.exports = [
     backgroundColor: '#406DEB',
     textColor: '#fff',
     headingColor: '#E7B70C',
-    logo: 'light'
-  },
-  {
-    filename: 'pigeon.gif',
-    user: 'EJ Hassenfratz',
-    title: 'Carrier Pigeon',
-    url: 'https://dribbble.com/shots/4833060-Carrier-Pigeon',
-    backgroundColor: '#75D999',
-    textColor: '#FFFFEE',
-    headingColor: '#4D4D4D',
     logo: 'light'
   },
   {
@@ -128,16 +98,5 @@ module.exports = [
     headingColor: '#37055A',
     filename: 'botw.png',
     logo: 'dark'
-  },
-  {
-    user: 'Richard Perez',
-    title: 'Just Happy to be Here',
-    url: 'https://dribbble.com/shots/4383362-Just-Happy-to-be-Here',
-    username: 'skinnyships',
-    backgroundColor: '#2A1A03',
-    textColor: '#3055C4',
-    headingColor: '#FFFFFF',
-    filename: 'spacecade_800.png',
-    logo: 'light'
   },
 ]
