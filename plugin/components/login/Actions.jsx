@@ -27,6 +27,14 @@ module.exports = class Actions extends React.Component {
     this.props.dialog.close()
   }
 
+  launchSignup() {
+    const authUrl = `${_.config.siteUrl}/auth/plugin?state=${_.config.platformIdentifier}-${this.state.sessionId}`
+    const signupUrl = `${_.config.siteUrl}/signup/new?redirect_to=${encodeURI(authUrl)}`
+    uxp.shell.openExternal(signupUrl)
+
+    this.setState({ status: 'authing' })
+  }
+
   launchLogin() {
     const authUrl = `${_.config.siteUrl}/auth/plugin?state=${_.config.platformIdentifier}-${this.state.sessionId}`
     uxp.shell.openExternal(authUrl)
@@ -90,7 +98,10 @@ module.exports = class Actions extends React.Component {
       break
     case 'login':
       var activeButton = (
-        <button onClick={this.launchLogin.bind(this)} uxp-variant="cta">Login to Dribbble</button>
+        <div class="row">
+          <button onClick={this.launchSignup.bind(this)}>Sign Up</button>
+          <button onClick={this.launchLogin.bind(this)} autofocus="autofocus" uxp-variant="cta">Login to Dribbble</button>
+        </div>
       )
       break
     }
