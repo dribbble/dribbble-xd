@@ -44,7 +44,16 @@ module.exports = class ShareModal extends React.Component {
         headers: requestHeaders
       }).then((response) => {
         response.json().then((user) => {
-          this.setState({ user: user })
+          let userData = {
+            id: user.id,
+            name: user.name,
+            login: user.login,
+            pro: user.pro || false,
+            avatar_url: user.avatar_url,
+            teams: user.teams || {}
+          }
+
+          this.setState({ user: userData })
           _.storage.set('userDetails', user)
         }).catch((error) => {
           console.log(error)
