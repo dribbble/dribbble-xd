@@ -82,52 +82,15 @@ module.exports = class ShareModal extends React.Component {
   }
 
   submitShot() {
-    this.setState({ submitting: true })
-
-    const formData = new FormData(this.refs.shotForm.refs.shotForm)
-    formData.append('image_data', `data:image/png;base64,${this.state.imageData}`)
-
-    const requestHeaders = new Headers()
-    requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
-
-    fetch(`${_.config.apiUrl}/shots`, {
-      method: 'POST',
-      headers: requestHeaders,
-      body: formData
-    }).then((response) => {
-      // UNCOMMENT FOR SUCCESS PREVIEW
-      // this.setState({
-      //   headerType: 'success',
-      //   status: 'success',
-      //   shotUrl: `${_.config.siteUrl}/shots/test`
-      // })
-      // return
-
-      if (response.status === 202) {
-        const splitUrl = response.headers.get('location').split('/')
-
-        this.setState({
-          headerType: 'success',
-          status: 'success',
-          shotUrl: `${_.config.siteUrl}/shots/${splitUrl[splitUrl.length - 1]}`
-        })
-      } else {
-        try {
-          response.json().then((data) => {
-            if (data.errors && data.errors[0].message.includes('daily limit')) {
-              this.setState({
-                headerType: 'error',
-                status: 'limit'
-              })
-            } else {
-              this.showError(data)
-            }
-          })
-        } catch(error) {
-          this.showError(error)
-        }
-      }
-    }).catch(this.showError.bind(this))
+    // FOR ADOBE MAX DEMO ONLY
+    //
+    // This does not actually submit to our server,
+    // but instead immediately shows a success state
+    this.setState({
+      headerType: 'success',
+      status: 'success',
+      shotUrl: `${_.config.siteUrl}`
+    })
   }
 
   showError(error) {
