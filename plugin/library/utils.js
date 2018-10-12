@@ -24,7 +24,12 @@ const serialize = require('../vendor/serialize')
 const storage = require('./storage')
 const config = require('./config')
 const uxp = require('uxp')
+const os = require('os')
 const app = require('application')
+
+// What platform are we on?
+const platformMac = os.platform() === 'darwin'
+const platformWin = os.platform() === 'win10'
 
 /**
  * Check against our internal dimension requirements
@@ -204,6 +209,8 @@ const nodeContains = function(node, el) {
 module.exports = {
   serialize,
   config,
+  platformMac,
+  platformWin,
   nodeTooSmall,
   nodeTooLarge,
   nodeBadRatio,

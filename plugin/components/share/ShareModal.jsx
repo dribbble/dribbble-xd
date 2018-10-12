@@ -158,7 +158,7 @@ module.exports = class ShareModal extends React.Component {
     switch(this.state.status)  {
     case 'loading':
       var view = (
-        <div className="loading-container">
+        <div className={`loading-container ${_.platformWin ? 'is-windows' : ''}`}>
           <img className="loading-image" src="plugin/images/processing.gif" />
         </div>
       )
@@ -218,7 +218,7 @@ module.exports = class ShareModal extends React.Component {
       break
     case 'ready':
       var view = (
-        <div className="form-container">
+        <div className={`form-container ${_.platformWin ? 'is-windows' : ''}`}>
           <Form
             ref="shotForm"
             node={this.props.node}
