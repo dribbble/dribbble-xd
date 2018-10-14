@@ -18,8 +18,9 @@
       if (!form) return;
       for (var i = 0; i < form.elements.length; ++i) {
         var element = form.elements[i];
-        if (element.name !== '')
-          this.append(element.name, element.value);
+        var name = element.getAttribute('name')
+        if (name !== '')
+          this.append(name, element.value);
       }
     }
 
