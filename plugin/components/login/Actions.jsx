@@ -23,6 +23,10 @@ module.exports = class Actions extends React.Component {
     })[status]
   }
 
+  componentDidMount() {
+    this.refs.loginButton.setAttribute('autofocus', 'autofocus')
+  }
+
   dismissDialog() {
     this.props.dialog.close()
   }
@@ -98,16 +102,16 @@ module.exports = class Actions extends React.Component {
       break
     case 'login':
       var activeButton = (
-        <div class="row">
+        <div className="row">
           <button onClick={this.launchSignup.bind(this)}>Sign Up</button>
-          <button onClick={this.launchLogin.bind(this)} autofocus="autofocus" uxp-variant="cta">Login to Dribbble</button>
+          <button onClick={this.launchLogin.bind(this)} ref="loginButton" uxp-variant="cta">Login to Dribbble</button>
         </div>
       )
       break
     }
 
     return (
-      <div id="login-footer">
+      <form id="login-footer">
         <p className="message">{this.messages(this.state.status)}</p>
 
         <footer className="container">
@@ -122,7 +126,7 @@ module.exports = class Actions extends React.Component {
           ) }
           <div className="spacer"></div>
         </footer>
-      </div>
+      </form>
     )
   }
 }
