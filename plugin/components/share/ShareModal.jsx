@@ -87,6 +87,10 @@ module.exports = class ShareModal extends React.Component {
     const formData = new FormData(this.refs.shotForm.refs.shotForm)
     formData.append('image_data', `data:image/png;base64,${this.state.imageData}`)
 
+    if (!this.refs.shotForm.refs.lowProfileCheckbox.checked) {
+      formData.delete('low_profile')
+    }
+
     const requestHeaders = new Headers()
     requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
 

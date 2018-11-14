@@ -44,7 +44,7 @@ module.exports = class Form extends React.Component {
           </label>
 
           <label className="checkbox-container">
-            <input type="checkbox" name="low_profile" value="true" />
+            <input type="checkbox" name="low_profile" value="true" ref="lowProfileCheckbox" />
             <span>Hide from my default profile</span>
           </label>
         </div>
