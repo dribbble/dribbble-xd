@@ -1,0 +1,39 @@
+{
+  "id": "6c3b782f",
+  "name": "Dribbble",
+  "description": "The Dribbble plugin allows you to share your creative process directly to the Dribbble community without ever leaving Adobe XD. Post on behalf of yourself or your team, schedule shots, and more.",
+  "author": "Dribbble Holdings Ltd.",
+  "version": "0.4.2",
+  "icons": [
+    {
+      "width": 512,
+      "height": 512,
+      "path": "plugin/images/icons/512.png"
+    },
+    {
+      "width": 48,
+      "height": 48,
+      "path": "plugin/images/icons/48.png"
+    },
+    {
+      "width": 24,
+      "height": 24,
+      "path": "plugin/images/icons/24.png"
+    }
+  ],
+  "host": {
+    "app": "XD",
+    "minVersion": "13.0.0"
+  },
+  "uiEntryPoints": [
+    {
+      "type": "menu",
+      "label": "Share Dribbble Shot",
+      "commandId": "share",
+      "shortcut": {
+        "mac": "Ctrl+Shift+D",
+        "win": "Ctrl+Shift+D"
+      }
+    }
+  ]
+}
