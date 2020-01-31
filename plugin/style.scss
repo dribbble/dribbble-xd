@@ -35,6 +35,10 @@ input[type=hidden] {
 
   .container {
     position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
     top: 0;
     left: 0;
     width: 100%;
@@ -52,6 +56,10 @@ input[type=hidden] {
     width: 308px;
     height: 230px;
     cursor: pointer;
+  }
+
+  .logo {
+    width: 100%;
   }
 
   .logo img {
