@@ -63,12 +63,14 @@ module.exports = class Actions extends React.Component {
       method: 'GET',
       headers: checkHeaders,
     }).then((response) => {
-      response.json().then((data) => {
-        _.storage.set('authToken', data.token)
+      try {
+        console.log(response.token);
+        _.storage.set('authToken', response.token)
         this.setState({ status: 'success' })
-      }).catch((error) => {
+      }
+      catch(err) {
         this.setState({ status: 'authfail' })
-      })
+      }
     }).catch((error) => {
       this.setState({ status: 'error' })
     })

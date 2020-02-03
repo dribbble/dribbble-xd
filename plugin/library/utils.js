@@ -144,21 +144,24 @@ const retriableFetch = (url, options={}, config={ retries: 5 }) => {
   }
 
   return new Promise((resolve, reject) => {
-    fetch(url, options).then((response) => {
-      if (response.ok) {
-        return resolve(response)
-      } else if (config.retries === 1) {
-        throw error
+    const req = new XMLHttpRequest();
+    req.onload = () => {
+      if (req.status === 200) {
+        try {
+          return resolve(req.response);
+        } catch (err) {
+          reject(`nope`)
+        }
+      } else {
+        reject(`still nope`)
       }
-
-      retry(resolve, reject)
-    }).catch((error) => {
-      if (config.retries === 1) {
-        throw error
-      }
-
-      retry(resolve, reject)
-    })
+    }
+    req.onerror = reject;
+    req.onabort = reject;
+    req.open('GET', url, true);
+    req.setRequestHeader('Authorization', options.headers.Authorization);
+    req.responseType = 'json';
+    req.send(options.headers);
   })
 }
 
