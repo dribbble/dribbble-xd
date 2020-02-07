@@ -43,7 +43,7 @@ module.exports = class Form extends React.Component {
             <textarea name="description" placeholder="Tell us about your process and how you arrived at this design"></textarea>
           </label>
 
-          <label className="checkbox-container">
+          <label className="checkbox-container row">
             <input type="checkbox" name="low_profile" value="true" ref="lowProfileCheckbox" />
             <span>Hide from my default profile</span>
           </label>

@@ -424,8 +424,9 @@ input[type=hidden] {
 
 .checkbox-container {
   cursor: pointer;
-  display: flex;
-  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
 
   input[type="checkbox"] {
     cursor: pointer;
@@ -441,7 +442,9 @@ input[type=hidden] {
 }
 
 .text-field-container {
-  display: block;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
   margin-bottom: 5px;
 
   span {
@@ -452,7 +455,12 @@ input[type=hidden] {
     cursor: pointer;
   }
 
+  input {
+    width: 100%;
+  }
+
   textarea {
+    width: 100%;
     height: 90px;
   }
 }
