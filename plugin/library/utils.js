@@ -150,11 +150,13 @@ const retriableFetch = (url, options={}, config={ retries: 5 }) => {
         try {
           return resolve(req.response);
         } catch (err) {
-          reject(`nope`)
+          reject(err)
         }
-      } else {
-        reject(`still nope`)
+      } else  if (config.retries === 1) {
+        throw error
       }
+
+      retry(resolve, reject)
     }
     req.onerror = reject;
     req.onabort = reject;
