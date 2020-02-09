@@ -64,7 +64,6 @@ module.exports = class Actions extends React.Component {
       headers: checkHeaders,
     }).then((response) => {
       try {
-        console.log(response.token);
         _.storage.set('authToken', response.token)
         this.setState({ status: 'success' })
       }

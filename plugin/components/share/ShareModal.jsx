@@ -39,27 +39,6 @@ module.exports = class ShareModal extends React.Component {
       const requestHeaders = new Headers()
       requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
 
-      // fetch(`${_.config.apiUrl}/user`, {
-      //   method: 'GET',
-      //   headers: requestHeaders
-      // }).then((response) => {
-      //   response.json().then((user) => {
-      //     let userData = {
-      //       id: user.id,
-      //       name: user.name,
-      //       login: user.login,
-      //       pro: user.pro || false,
-      //       avatar_url: user.avatar_url,
-      //       teams: user.teams || {}
-      //     }
-
-      //     this.setState({ user: userData })
-      //     _.storage.set('userDetails', user)
-      //   }).catch((error) => {
-      //     console.log(error)
-      //   })
-      // })
-
       const req = new XMLHttpRequest();
       req.onload = () => {
         if (req.status === 200) {
@@ -77,14 +56,12 @@ module.exports = class ShareModal extends React.Component {
             this.setState({ user: userData })
             _.storage.set('userDetails', user)
           } catch (err) {
-            console.log('catching error')
+            console.log(err)
           }
-        } else {
-          console.log('request failed')
         }
       }
-      req.onerror = console.log('errored');
-      req.onabort = console.log('aborted');
+      req.onerror = console.log('request failed');
+      req.onabort = console.log('request aborted');
       req.open('GET', `${_.config.apiUrl}/user`, true);
       req.setRequestHeader('Authorization', `Bearer ${this.props.auth}`);
       req.responseType = 'json';
@@ -162,7 +139,6 @@ module.exports = class ShareModal extends React.Component {
 
     xhr.send(jsonShotObject);
   }
-
 
   showError(error) {
     console.log(error)
