@@ -20,7 +20,7 @@ module.exports = class Form extends React.Component {
     return (
       <form id="shot-form" ref="shotForm">
         { this.props.selectedAccount ? (
-          <input type="hidden" name="team_id" value={this.props.selectedAccount} />
+          <input ref="teamId" type="hidden" name="team_id" value={this.props.selectedAccount} />
         ) : null }
 
         <div className="left-column">
@@ -35,12 +35,12 @@ module.exports = class Form extends React.Component {
 
           <label className="text-field-container">
             <span>Tags</span>
-            <input name="tags" placeholder="adobexd, awesome design" onKeyPress={this.handleKeyPress.bind(this)} />
+            <input ref="tags" name="tags" placeholder="adobexd, awesome design" onKeyPress={this.handleKeyPress.bind(this)} />
           </label>
 
           <label className="text-field-container">
             <span>Description</span>
-            <textarea name="description" placeholder="Tell us about your process and how you arrived at this design"></textarea>
+            <textarea ref="description" name="description" placeholder="Tell us about your process and how you arrived at this design"></textarea>
           </label>
 
           <label className="checkbox-container row">

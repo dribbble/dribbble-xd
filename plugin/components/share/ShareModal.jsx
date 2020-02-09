@@ -114,31 +114,24 @@ module.exports = class ShareModal extends React.Component {
   submitShot() {
     this.setState({ submitting: true })
 
-    const formData = new FormData(this.refs.shotForm.refs.shotForm)
-    formData.append('image_data', `data:image/png;base64,${this.state.imageData}`)
+    var shotObject = {
+      title: this.refs.shotForm.refs.titleField.value,
+      tags: this.refs.shotForm.refs.tags.value,
+      description: this.refs.shotForm.refs.description.value,
+      image_data: `data:image/png;base64,${this.state.imageData}`,
+      low_profile: this.refs.shotForm.refs.lowProfileCheckbox.checked
+    };
 
-    if (!this.refs.shotForm.refs.lowProfileCheckbox.checked) {
-      formData.delete('low_profile')
+    if (this.refs.shotForm.refs.teamId) {
+      shotObject['team_id'] = this.refs.shotForm.refs.teamId.value;
     }
 
-    const requestHeaders = new Headers()
-    requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
+    var jsonShotObject = JSON.stringify(shotObject);
 
-    fetch(`${_.config.apiUrl}/shots`, {
-      method: 'POST',
-      headers: requestHeaders,
-      body: formData
-    }).then((response) => {
-      // UNCOMMENT FOR SUCCESS PREVIEW
-      // this.setState({
-      //   headerType: 'success',
-      //   status: 'success',
-      //   shotUrl: `${_.config.siteUrl}/shots/test`
-      // })
-      // return
-
-      if (response.status === 202) {
-        const splitUrl = response.headers.get('location').split('/')
+    var xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+      if (xhr.status === 202) {
+        const splitUrl = xhr.getResponseHeader('location').split('/')
 
         this.setState({
           headerType: 'success',
@@ -147,7 +140,7 @@ module.exports = class ShareModal extends React.Component {
         })
       } else {
         try {
-          response.json().then((data) => {
+          xhr.response.json().then((data) => {
             if (data.errors && data.errors[0].message.includes('daily limit')) {
               this.setState({
                 headerType: 'error',
@@ -157,12 +150,19 @@ module.exports = class ShareModal extends React.Component {
               this.showError(data)
             }
           })
-        } catch(error) {
+        } catch (error) {
           this.showError(error)
         }
       }
-    }).catch(this.showError.bind(this))
+    }
+
+    xhr.open("POST", `${_.config.apiUrl}/shots`);
+    xhr.setRequestHeader("Authorization", `Bearer ${this.props.auth}`);
+    xhr.setRequestHeader("Content-Type", "application/json;");
+
+    xhr.send(jsonShotObject);
   }
+
 
   showError(error) {
     console.log(error)
