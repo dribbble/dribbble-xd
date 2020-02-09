@@ -153,7 +153,7 @@ const retriableFetch = (url, options={}, config={ retries: 5 }) => {
           reject(err)
         }
       } else if (config.retries === 1) {
-        throw error
+        reject("Unable to complete request");
       }
 
       retry(resolve, reject)
