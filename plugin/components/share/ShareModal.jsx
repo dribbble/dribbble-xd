@@ -60,8 +60,8 @@ module.exports = class ShareModal extends React.Component {
           }
         }
       }
-      req.onerror = console.log('request failed');
-      req.onabort = console.log('request aborted');
+      req.onerror = () => console.log('request failed');
+      req.onabort = () => console.log('request aborted');
       req.open('GET', `${_.config.apiUrl}/user`, true);
       req.setRequestHeader('Authorization', `Bearer ${this.props.auth}`);
       req.responseType = 'json';
@@ -133,6 +133,8 @@ module.exports = class ShareModal extends React.Component {
       }
     }
 
+    xhr.onerror = () => console.log('request failed');
+    xhr.onabort = () => console.log('request aborted');
     xhr.open("POST", `${_.config.apiUrl}/shots`);
     xhr.setRequestHeader("Authorization", `Bearer ${this.props.auth}`);
     xhr.setRequestHeader("Content-Type", "application/json;");

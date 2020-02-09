@@ -152,14 +152,14 @@ const retriableFetch = (url, options={}, config={ retries: 5 }) => {
         } catch (err) {
           reject(err)
         }
-      } else  if (config.retries === 1) {
+      } else if (config.retries === 1) {
         throw error
       }
 
       retry(resolve, reject)
     }
-    req.onerror = reject;
-    req.onabort = reject;
+    req.onerror = () => reject;
+    req.onabort = () => reject;
     req.open('GET', url, true);
     req.setRequestHeader('Authorization', options.headers.Authorization);
     req.responseType = 'json';
