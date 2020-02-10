@@ -36,9 +36,6 @@ module.exports = class ShareModal extends React.Component {
 
   componentDidMount() {
     if (!this.props.user) {
-      const requestHeaders = new Headers()
-      requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
-
       const req = new XMLHttpRequest();
       req.onload = () => {
         if (req.status === 200) {
