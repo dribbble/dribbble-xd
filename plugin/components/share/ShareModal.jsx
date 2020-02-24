@@ -36,29 +36,33 @@ module.exports = class ShareModal extends React.Component {
 
   componentDidMount() {
     if (!this.props.user) {
-      const requestHeaders = new Headers()
-      requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
+      const req = new XMLHttpRequest();
+      req.onload = () => {
+        if (req.status === 200) {
+          try {
+            let user = req.response
+            let userData = {
+              id: user.id,
+              name: user.name,
+              login: user.login,
+              pro: user.pro || false,
+              avatar_url: user.avatar_url,
+              teams: user.teams || {}
+            }
 
-      fetch(`${_.config.apiUrl}/user`, {
-        method: 'GET',
-        headers: requestHeaders
-      }).then((response) => {
-        response.json().then((user) => {
-          let userData = {
-            id: user.id,
-            name: user.name,
-            login: user.login,
-            pro: user.pro || false,
-            avatar_url: user.avatar_url,
-            teams: user.teams || {}
+            this.setState({ user: userData })
+            _.storage.set('userDetails', user)
+          } catch (err) {
+            console.log(err)
           }
-
-          this.setState({ user: userData })
-          _.storage.set('userDetails', user)
-        }).catch((error) => {
-          console.log(error)
-        })
-      })
+        }
+      }
+      req.onerror = () => console.log('request failed');
+      req.onabort = () => console.log('request aborted');
+      req.open('GET', `${_.config.apiUrl}/user`, true);
+      req.setRequestHeader('Authorization', `Bearer ${this.props.auth}`);
+      req.responseType = 'json';
+      req.send();
     } else {
       this.setUpContents()
     }
@@ -84,31 +88,24 @@ module.exports = class ShareModal extends React.Component {
   submitShot() {
     this.setState({ submitting: true })
 
-    const formData = new FormData(this.refs.shotForm.refs.shotForm)
-    formData.append('image_data', `data:image/png;base64,${this.state.imageData}`)
+    var shotObject = {
+      title: this.refs.shotForm.refs.titleField.value,
+      tags: this.refs.shotForm.refs.tags.value,
+      description: this.refs.shotForm.refs.description.value,
+      image_data: `data:image/png;base64,${this.state.imageData}`,
+      low_profile: this.refs.shotForm.refs.lowProfileCheckbox.checked
+    };
 
-    if (!this.refs.shotForm.refs.lowProfileCheckbox.checked) {
-      formData.delete('low_profile')
+    if (this.refs.shotForm.refs.teamId) {
+      shotObject['team_id'] = this.refs.shotForm.refs.teamId.value;
     }
 
-    const requestHeaders = new Headers()
-    requestHeaders.append('Authorization', `Bearer ${this.props.auth}`)
+    var jsonShotObject = JSON.stringify(shotObject);
 
-    fetch(`${_.config.apiUrl}/shots`, {
-      method: 'POST',
-      headers: requestHeaders,
-      body: formData
-    }).then((response) => {
-      // UNCOMMENT FOR SUCCESS PREVIEW
-      // this.setState({
-      //   headerType: 'success',
-      //   status: 'success',
-      //   shotUrl: `${_.config.siteUrl}/shots/test`
-      // })
-      // return
-
-      if (response.status === 202) {
-        const splitUrl = response.headers.get('location').split('/')
+    var xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+      if (xhr.status === 202) {
+        const splitUrl = xhr.getResponseHeader('location').split('/')
 
         this.setState({
           headerType: 'success',
@@ -117,7 +114,7 @@ module.exports = class ShareModal extends React.Component {
         })
       } else {
         try {
-          response.json().then((data) => {
+          xhr.response.json().then((data) => {
             if (data.errors && data.errors[0].message.includes('daily limit')) {
               this.setState({
                 headerType: 'error',
@@ -127,11 +124,19 @@ module.exports = class ShareModal extends React.Component {
               this.showError(data)
             }
           })
-        } catch(error) {
+        } catch (error) {
           this.showError(error)
         }
       }
-    }).catch(this.showError.bind(this))
+    }
+
+    xhr.onerror = () => console.log('request failed');
+    xhr.onabort = () => console.log('request aborted');
+    xhr.open("POST", `${_.config.apiUrl}/shots`);
+    xhr.setRequestHeader("Authorization", `Bearer ${this.props.auth}`);
+    xhr.setRequestHeader("Content-Type", "application/json;");
+
+    xhr.send(jsonShotObject);
   }
 
   showError(error) {

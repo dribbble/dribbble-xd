@@ -25,13 +25,15 @@ module.exports = class Header extends React.Component {
             }}
           />
 
-          <a className="logo" href={`${_.config.siteUrl}/?utm_source=xd-plugin`}>
-            <img src={`plugin/images/dribbble-logo-large-${this.state.shot.logo}.png`} />
-          </a>
+          <div>
+            <a className="logo" href={`${_.config.siteUrl}/?utm_source=xd-plugin`}>
+              <img src={`plugin/images/dribbble-logo-large-${this.state.shot.logo}.png`} />
+            </a>
 
-          <div className={`info ${this.state.shot.theme}`}>
-            <h1 style={{ color: this.state.shot.headingColor }}>What are you working on?</h1>
-            <p style={{ color: this.state.shot.textColor }}>Dribbble is a community of designers sharing screenshots of their work, process, and projects.</p>
+            <div className={`info ${this.state.shot.theme}`}>
+              <h1 style={{ color: this.state.shot.headingColor }}>What are you working on?</h1>
+              <p style={{ color: this.state.shot.textColor }}>Dribbble is a community of designers sharing screenshots of their work, process, and projects.</p>
+            </div>
           </div>
 
           <div className="border" />

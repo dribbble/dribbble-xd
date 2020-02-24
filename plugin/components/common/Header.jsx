@@ -40,10 +40,17 @@ module.exports = class Header extends React.Component {
       <div id="share-header">
         <header>
           <div className="top-section">
-            <div className="logo-container">
-              <a href={`${_.config.siteUrl}/?utm_source=xd-plugin`} className="logo">
-                <img src="plugin/images/dribbble-logo.png" />
-              </a>
+            <div>
+              <div className="logo-container">
+                <a href={`${_.config.siteUrl}/?utm_source=xd-plugin`} className="logo">
+                  <img src="plugin/images/dribbble-logo.png" />
+                </a>
+              </div>
+
+              <p className="title">
+                <img src={`plugin/images/${title.icon}`} />
+                <span>{title.text}</span>
+              </p>
             </div>
 
             <div id="logout-container">
@@ -52,11 +59,6 @@ module.exports = class Header extends React.Component {
               </div>
             </div>
           </div>
-
-          <p className="title">
-            <img src={`plugin/images/${title.icon}`} />
-            <span>{title.text}</span>
-          </p>
 
           <div className="border" />
         </header>
