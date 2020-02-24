@@ -1,14 +1,32 @@
 {
   "id": "6c3b782f",
   "name": "Dribbble",
+  "summary": "Share your creative process.",
   "description": "The Dribbble plugin allows you to share your creative process directly to the Dribbble community without ever leaving Adobe XD. Post on behalf of yourself or your team, schedule shots, and more.",
   "author": "Dribbble Holdings Ltd.",
-  "version": "0.4.2",
+  "website": "https://dribbble.com/",
+  "helpUrl": "https://help.dribbble.com/",
+  "version": "0.5.0",
   "icons": [
     {
       "width": 512,
       "height": 512,
       "path": "plugin/images/icons/512.png"
+    },
+    {
+      "width": 192,
+      "height": 192,
+      "path": "plugin/images/icons/192.png"
+    },
+    {
+      "width": 144,
+      "height": 144,
+      "path": "plugin/images/icons/144.png"
+    },
+    {
+      "width": 96,
+      "height": 96,
+      "path": "plugin/images/icons/96.png"
     },
     {
       "width": 48,
