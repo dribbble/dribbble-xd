@@ -22,7 +22,7 @@
     "css-loader": "^1.0.0",
     "dotenv": "^6.0.0",
     "file-loader": "^1.1.11",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.13.1",
     "nodemon": "^1.18.3",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.22.0",
